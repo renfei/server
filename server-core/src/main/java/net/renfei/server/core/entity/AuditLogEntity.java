@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.renfei.server.core.constant.LogLevelEnum;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -26,6 +27,8 @@ public class AuditLogEntity implements Serializable {
     private String uuid;
     @Schema(description = "日志时间")
     private Date logTime;
+    @Schema(description = "日志等级")
+    private LogLevelEnum logLevel;
     @Schema(description = "模块")
     private String module;
     @Schema(description = "操作人")

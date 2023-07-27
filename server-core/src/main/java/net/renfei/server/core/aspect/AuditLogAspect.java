@@ -77,6 +77,7 @@ public class AuditLogAspect {
         AuditLogEntity auditLogEntity = AuditLogEntity.builder()
                 .uuid(uuid)
                 .logTime(new Date())
+                .logLevel(auditLog.logLevel())
                 .module(module)
                 .username("")
                 .operation(operation)

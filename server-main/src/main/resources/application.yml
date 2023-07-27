@@ -5,6 +5,12 @@ spring:
   profiles:
     active: @profiles.active@
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  show-login-endpoint: true
+  show-oauth2-endpoints: true
+
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
 
