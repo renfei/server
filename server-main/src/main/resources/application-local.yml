@@ -1,0 +1,84 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/renfei
+    username: root
+    password: root
+    druid:
+      # 初始化时建立物理连接的个数
+      initialSize: 1
+      # 最小连接池数量
+      minIdle: 10
+      # 最大连接池数量
+      maxActive: 100
+      # 获取连接时最大等待时间，单位毫秒
+      maxWait: 60000
+      # 用来检测连接是否有效的sql
+      validationQuery: SELECT 1 FROM DUAL
+      filters: stat,wall,log4j2
+      web-stat-filter:
+        enabled: true
+        url-pattern: "/*"
+        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        login-username: admin
+        login-password: admin
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      connect-timeout: 600ms
+      timeout: 6000ms
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 8
+          max-idle: 8
+          max-wait: -1ms
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: unittesting@163.com
+    password: LIHHGXNJTROOXETM
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail.smtp.localhost: renfei.net
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.socketFactory.port: 465
+      mail.smtp.socketFactory.class: javax.net.ssl.SSLSocketFactory
+      mail.smtp.socketFactory.fallback: false
+    jndi-name: mail/Session
+  elasticsearch:
+    uris: http://localhost:9200
+    username: elastic
+    password: elastic
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+
+logging:
+  level:
+    root: info
+    net.renfei.web.api: info
+
+application:
+  # 是否启用自定义加密
+  enableCustomEncryption: false
+  # 是否启用涉密三员
+  enableThreeMembers: false
+  # 系统最大涉密等级：net.renfei.web.api.constant.SecretLevelEnum
+  systemMaxSecretLevel: UNCLASSIFIED
+  jwt:
+    # token 过期时间 8*60*60=28800 秒
+    tokenExpiration: 28800
+    # token 秘钥
+    secret: DBPSbfAww5qJ2d9WTLarGpwa90n2PMqJq5q1sUuLx4MIrJsIVa4/AizFhUdpgNj4X2FB/CMdySNRwH1bR5f66A==

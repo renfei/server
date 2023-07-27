@@ -1,0 +1,14 @@
+server:
+  port: 9595
+
+spring:
+  profiles:
+    active: @profiles.active@
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+
+pagehelper:
+  helperDialect: mariadb
+  reasonable: true
+  supportMethodsArguments: true

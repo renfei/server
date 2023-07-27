@@ -1,0 +1,16 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.renfei</groupId>
+        <artifactId>server</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <artifactId>server-member</artifactId>
+    <packaging>pom</packaging>
+    <description>Server Member Service</description>
+    <modules>
+        <module>server-member-api</module>
+        <module>server-member-biz</module>
+    </modules>
+</project>
