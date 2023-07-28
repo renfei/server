@@ -26,6 +26,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Tag(name = "审计日志", description = "审计日志")
 public class AuditLogController extends BaseController {
+    private final static String MODULE_NAME = "SYSTEM";
     private final SecurityService securityService;
 
     /**
@@ -61,7 +62,7 @@ public class AuditLogController extends BaseController {
                     @Parameter(name = "rows", description = "每页容量")
             })
     @GetMapping("/core/system/audit/log")
-    @AuditLog(module = "SYSTEM", operation = "查询审计日志", descriptionExpression = "查询审计日志")
+    @AuditLog(module = MODULE_NAME, operation = "查询审计日志", descriptionExpression = "查询审计日志")
     public ApiResult<ListData<AuditLogEntity>> queryAuditLog(
             @RequestParam(value = "minDate", required = false) Date minDate,
             @RequestParam(value = "maxDate", required = false) Date maxDate,
