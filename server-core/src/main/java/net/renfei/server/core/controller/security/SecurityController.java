@@ -29,7 +29,7 @@ public class SecurityController extends BaseController {
      *
      * @return
      */
-    @GetMapping("/security/secret-key")
+    @GetMapping("/core/security/secret-key")
     @Operation(summary = "向服务器申请服务器公钥",
             description = "交换逻辑请查看：https://www.renfei.net/posts/1003346",
             tags = {"认证鉴权接口"})
@@ -44,7 +44,7 @@ public class SecurityController extends BaseController {
      * @param secretKey
      * @return
      */
-    @PostMapping("/security/secret-key")
+    @PostMapping("/core/security/secret-key")
     @Operation(summary = "上报客户端公钥，并下发AES秘钥",
             description = "交换逻辑请查看：https://www.renfei.net/posts/1003346"
             , tags = {"认证鉴权接口"})
