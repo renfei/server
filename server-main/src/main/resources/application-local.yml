@@ -71,6 +71,10 @@ logging:
     net.renfei.web.api: info
 
 application:
+  # 站点名称
+  siteName: 任霏的博客
+  # 邮件回复邮箱地址
+  emailReplyTo: i@renfei.net
   # 是否启用自定义加密
   enableCustomEncryption: false
   # 是否启用涉密三员

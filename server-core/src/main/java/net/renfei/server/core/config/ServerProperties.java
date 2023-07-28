@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "application")
 public class ServerProperties {
+    private String siteName;
+    private String emailReplyTo;
     private Boolean enableCustomEncryption;
     private Boolean enableThreeMembers;
     private SecretLevelEnum systemMaxSecretLevel;
