@@ -87,6 +87,7 @@ public class AuditLogAspect {
         this.settingRequestInfo(auditLogEntity);
         SysAuditLogWithBLOBs sysAuditLog = new SysAuditLogWithBLOBs();
         BeanUtils.copyProperties(auditLogEntity, sysAuditLog);
+        sysAuditLog.setLogLevel(auditLogEntity.getLogLevel().toString());
         sysAuditLogMapper.insertSelective(sysAuditLog);
     }
 
