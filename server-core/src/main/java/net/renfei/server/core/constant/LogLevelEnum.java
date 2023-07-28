@@ -7,6 +7,10 @@ package net.renfei.server.core.constant;
  */
 public enum LogLevelEnum {
     /**
+     * 致命
+     */
+    FATAL,
+    /**
      * 错误信息
      */
     ERROR,
