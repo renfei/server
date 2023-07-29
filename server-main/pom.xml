@@ -19,6 +19,10 @@
             <groupId>net.renfei</groupId>
             <artifactId>server-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.renfei</groupId>
+            <artifactId>server-member-biz</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

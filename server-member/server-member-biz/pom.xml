@@ -15,5 +15,15 @@
             <groupId>net.renfei</groupId>
             <artifactId>server-member-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.renfei</groupId>
+            <artifactId>server-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 </project>
