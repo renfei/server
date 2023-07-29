@@ -23,8 +23,15 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl extends BaseService implements UserService {
     private final JwtUtil jwtUtil;
 
+    /**
+     * 根据用户名查找用户
+     *
+     * @param username the username identifying the user whose data is required.
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetail loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
 

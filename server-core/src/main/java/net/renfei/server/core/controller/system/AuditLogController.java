@@ -11,6 +11,7 @@ import net.renfei.server.core.entity.ApiResult;
 import net.renfei.server.core.entity.AuditLogEntity;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.service.SecurityService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,6 +66,7 @@ public class AuditLogController extends BaseController {
             })
     @GetMapping("/core/system/audit/log")
     @AuditLog(module = MODULE_NAME, operation = "查询审计日志", descriptionExpression = "查询审计日志")
+    @PreAuthorize("hasRole('ROLE_MANAGER')")
     public ApiResult<ListData<AuditLogEntity>> queryAuditLog(
             @RequestParam(value = "minDate", required = false) Date minDate,
             @RequestParam(value = "maxDate", required = false) Date maxDate,

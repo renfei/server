@@ -15,6 +15,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户详情
@@ -64,10 +65,11 @@ public class UserDetail implements UserDetails, Serializable {
     private Boolean enabled;
     @Schema(description = "昵称")
     private String nickname;
+    private List<RoleDetail> roleDetails;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+    public List<RoleDetail> getAuthorities() {
+        return this.roleDetails;
     }
 
     @Override

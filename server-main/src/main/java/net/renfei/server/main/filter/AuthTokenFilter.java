@@ -7,11 +7,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import net.renfei.server.core.entity.RoleDetail;
+import net.renfei.server.core.entity.UserDetail;
 import net.renfei.server.core.service.UserService;
 import net.renfei.server.core.utils.JwtUtil;
 import net.renfei.server.member.service.MemberService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -20,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * JWT Token过滤器
@@ -53,19 +57,22 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             return;
         }
         String audience = jwtUtil.getClaimFromToken(token, Claims::getAudience);
-        UserDetails userDetails;
+        UserDetail userDetail;
         if ("manager".equals(audience)) {
             // 系统管理员的 Token
-            userDetails = userService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
+            userDetail = userService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
+            RoleDetail roleDetail = new RoleDetail();
+            roleDetail.setRoleName("MANAGER");
+            userDetail.getAuthorities().add(roleDetail);
         } else {
             // 普通用户会员的 Token
-            userDetails = memberService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
+            userDetail = memberService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
         }
         UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null,
-                userDetails == null ?
-                        new ArrayList<>() : userDetails.getAuthorities()
+                userDetail, null,
+                userDetail == null ?
+                        new ArrayList<>() : userDetail.getAuthorities()
         );
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)
