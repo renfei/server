@@ -56,7 +56,6 @@ public class SecurityServiceImpl implements SecurityService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
