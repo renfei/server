@@ -54,7 +54,7 @@ public class SecurityServiceImpl implements SecurityService {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("找不到弱密码列表文件。", e);
         }
     }
 
