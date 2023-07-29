@@ -38,7 +38,21 @@ public class SwaggerConfig {
     public GroupedOpenApi coreGroupedOpenApi() {
         return GroupedOpenApi.builder()
                 .group("Core")
-                .pathsToMatch("/core/**")
+                .pathsToMatch("/api/core/**")
+                .addOperationCustomizer((operation, handlerMethod) -> operation
+                        .addParametersItem(new Parameter()
+                                .name(HttpHeaders.AUTHORIZATION)
+                                .description("认证 Token")
+                                .in(String.valueOf(io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER))
+                        ))
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi memberGroupedOpenApi() {
+        return GroupedOpenApi.builder()
+                .group("Member")
+                .pathsToMatch("/api/member/**")
                 .addOperationCustomizer((operation, handlerMethod) -> operation
                         .addParametersItem(new Parameter()
                                 .name(HttpHeaders.AUTHORIZATION)

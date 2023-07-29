@@ -11,6 +11,7 @@ import net.renfei.server.core.entity.SystemVersionInfo;
 import net.renfei.server.core.service.SystemService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 @Tag(name = "系统接口", description = "系统接口")
 public class SystemController extends BaseController {
     private final static String MODULE_NAME = "SYSTEM";

@@ -8,10 +8,7 @@ import net.renfei.server.core.controller.BaseController;
 import net.renfei.server.core.entity.ApiResult;
 import net.renfei.server.core.entity.SecretKey;
 import net.renfei.server.core.service.SecurityService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 安全接口
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 @Tag(name = "安全接口", description = "安全接口")
 public class SecurityController extends BaseController {
     private final static String MODULE_NAME = "SECURITY";

@@ -12,6 +12,7 @@ import net.renfei.server.core.entity.AuditLogEntity;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.service.SecurityService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,7 @@ import java.util.Date;
  */
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 @Tag(name = "审计日志", description = "审计日志")
 public class AuditLogController extends BaseController {
     private final static String MODULE_NAME = "SYSTEM";
