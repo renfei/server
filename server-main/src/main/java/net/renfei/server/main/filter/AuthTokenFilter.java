@@ -1,5 +1,6 @@
-package net.renfei.server.core.security.filter;
+package net.renfei.server.main.filter;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 @Component
 @RequiredArgsConstructor
 public class AuthTokenFilter extends OncePerRequestFilter {
+    private final static String BEARER_TOKEN = "Bearer ";
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
@@ -34,7 +36,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header == null || !header.startsWith("Bearer ")) {
+        if (header == null || !header.startsWith(BEARER_TOKEN)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -48,18 +50,24 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        UserDetails userDetails = userService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
-        UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null,
-                userDetails == null ?
-                        new ArrayList<>() : userDetails.getAuthorities()
-        );
-        authentication.setDetails(
-                new WebAuthenticationDetailsSource().buildDetails(request)
-        );
+        String audience = jwtUtil.getClaimFromToken(token, Claims::getAudience);
+        if ("manager".equals(audience)) {
+            // 系统管理员的 Token
+            UserDetails userDetails = userService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
+            UsernamePasswordAuthenticationToken
+                    authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails, null,
+                    userDetails == null ?
+                            new ArrayList<>() : userDetails.getAuthorities()
+            );
+            authentication.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request)
+            );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+            // TODO 普通用户的 Token
+        }
         filterChain.doFilter(request, response);
     }
 }

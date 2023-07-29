@@ -37,7 +37,7 @@ public class UserServiceImpl extends BaseService implements UserService {
     @Override
     public SignInResponse signIn(SignInRequest signInRequest) {
         UserDetail userDetail = null;
-        String token = jwtUtil.generateToken(userDetail);
+        String token = jwtUtil.generateToken(userDetail, "manager");
         // TODO 放入 Redis
         log.info("用户：{} 登入系统。", signInRequest.getUsername());
         return SignInResponse.builder()
