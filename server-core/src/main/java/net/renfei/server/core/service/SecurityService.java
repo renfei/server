@@ -14,6 +14,14 @@ import java.util.Date;
  */
 public interface SecurityService {
     /**
+     * 弱密码检测
+     *
+     * @param password 明文密码
+     * @return
+     */
+    boolean weakPasswordCheck(String password);
+
+    /**
      * 向服务器申请服务器公钥
      *
      * @return

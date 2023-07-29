@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class ServerProperties {
     private String siteName;
     private String emailReplyTo;
+    private Boolean enableSM3;
     private Boolean enableCustomEncryption;
     private Boolean enableThreeMembers;
     private SecretLevelEnum systemMaxSecretLevel;

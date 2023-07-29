@@ -19,15 +19,14 @@ import net.renfei.server.core.service.SecurityService;
 import net.renfei.server.core.utils.AesUtil;
 import net.renfei.server.core.utils.RsaUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 安全服务
@@ -40,6 +39,36 @@ import java.util.UUID;
 public class SecurityServiceImpl implements SecurityService {
     private final SysAuditLogMapper sysAuditLogMapper;
     private final SysSecretKeyMapper sysSecretKeyMapper;
+    private final static Set<String> WEAK_PASSWORD_LIST;
+
+    static {
+        WEAK_PASSWORD_LIST = new HashSet<>();
+        try {
+            File resource = new ClassPathResource("weak-password-list.txt").getFile();
+            try (FileInputStream fis = new FileInputStream(resource);
+                 InputStreamReader isr = new InputStreamReader(fis);
+                 BufferedReader br = new BufferedReader(isr);) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    WEAK_PASSWORD_LIST.add(line);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public boolean weakPasswordCheck(String password) {
+        if (password == null) {
+            return true;
+        }
+        if (password.length() < 8) {
+            return true;
+        }
+        return WEAK_PASSWORD_LIST.contains(password);
+    }
 
     /**
      * 向服务器申请服务器公钥
