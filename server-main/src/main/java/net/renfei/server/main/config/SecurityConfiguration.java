@@ -1,10 +1,10 @@
-package net.renfei.server.core.config;
+package net.renfei.server.main.config;
 
 import lombok.RequiredArgsConstructor;
 import net.renfei.server.core.handler.AccessDeniedHandlerImpl;
 import net.renfei.server.core.handler.AuthenticationEntryPointImpl;
-import net.renfei.server.core.security.filter.AuthTokenFilter;
 import net.renfei.server.core.service.UserService;
+import net.renfei.server.main.filter.AuthTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
