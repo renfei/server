@@ -1,6 +1,7 @@
 # Renfei.net的服务器端程序
 
 [![License](https://img.shields.io/github/license/renfei/server)](https://github.com/renfei/server/blob/master/LICENSE)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/347656db64164c759c755241f8534bbd)](https://app.codacy.com/gh/renfei/server/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ## 模块
 
