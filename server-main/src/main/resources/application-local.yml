@@ -77,6 +77,8 @@ application:
   emailReplyTo: i@renfei.net
   # 是否使用国密SM3算法
   enableSM3: false
+  # 是否允许多地同时登录
+  allowConcurrentLogin: false
   # 是否启用自定义加密
   enableCustomEncryption: false
   # 是否启用涉密三员

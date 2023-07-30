@@ -7,11 +7,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import net.renfei.server.core.config.ServerProperties;
 import net.renfei.server.core.entity.RoleDetail;
 import net.renfei.server.core.entity.UserDetail;
+import net.renfei.server.core.service.RedisService;
 import net.renfei.server.core.service.UserService;
 import net.renfei.server.core.utils.JwtUtil;
 import net.renfei.server.member.service.MemberService;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +41,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserService userService;
     private final MemberService memberService;
+    private final ServerProperties properties;
+    private final RedisTemplate<String, Serializable> redisTemplate;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        SecurityContextHolder.getContext().setAuthentication(null);
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header == null || !header.startsWith(BEARER_TOKEN)) {
             filterChain.doFilter(request, response);
@@ -61,18 +68,46 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         if ("manager".equals(audience)) {
             // 系统管理员的 Token
             userDetail = userService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
+            if (!properties.getAllowConcurrentLogin()) {
+                // 不允许多地登录
+                Serializable serializable = redisTemplate.opsForValue().get(RedisService.AUTH_TOKEN_KEY
+                        + "MANAGER:" + userDetail.getUsername());
+                if (serializable == null) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+                if (!serializable.toString().equals(token)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            }
             RoleDetail roleDetail = new RoleDetail();
             roleDetail.setRoleName("MANAGER");
             userDetail.getAuthorities().add(roleDetail);
         } else {
             // 普通用户会员的 Token
             userDetail = memberService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
+            if (!properties.getAllowConcurrentLogin()) {
+                // 不允许多地登录
+                Serializable serializable = redisTemplate.opsForValue().get(RedisService.AUTH_TOKEN_KEY
+                        + "MEMBER:" + userDetail.getUsername());
+                if (serializable == null) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+                if (!serializable.toString().equals(token)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+            }
+            RoleDetail roleDetail = new RoleDetail();
+            roleDetail.setRoleName("MEMBER");
+            userDetail.getAuthorities().add(roleDetail);
         }
         UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(
                 userDetail, null,
-                userDetail == null ?
-                        new ArrayList<>() : userDetail.getAuthorities()
+                userDetail.getAuthorities()
         );
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)
