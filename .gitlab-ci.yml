@@ -1,24 +1,25 @@
 stages:
   - package
   - build
+  - test
 
 cache:
-  key: $CI_PROJECT_ID
+  key: "$CI_PROJECT_ID"
   paths:
-    - .m2/repository/
+    - ".m2/repository/"
 
 package:
   stage: package
   image: maven:3.9.2-eclipse-temurin-17
   interruptible: true
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: "$CI_COMMIT_TAG"
   script:
     - mvn clean package -f pom.xml
       -P prod -Dmaven.test.skip=true
       -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
   artifacts:
-    name: 'maven-package'
+    name: maven-package
     when: on_success
     expire_in: 1 day
     paths:
@@ -29,7 +30,7 @@ build:
   image: docker:latest
   interruptible: true
   rules:
-    - if: '$CI_COMMIT_TAG'
+    - if: "$CI_COMMIT_TAG"
   services:
     - docker:dind
   dependencies:
@@ -38,3 +39,8 @@ build:
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG .
     - docker login --username=$CI_REGISTRY_USER --password=$CI_REGISTRY_PASSWORD $CI_REGISTRY_IMAGE
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+
+sast:
+  stage: test
+include:
+  - template: Security/SAST.gitlab-ci.yml
