@@ -195,6 +195,7 @@ public class SecurityServiceImpl implements SecurityService {
                                                   String username, String operation, String description, String requestMethod,
                                                   String requestUri, String clientIp, int pages, int rows) {
         SysAuditLogExample example = new SysAuditLogExample();
+        example.setOrderByClause("log_time DESC");
         SysAuditLogExample.Criteria criteria = example.createCriteria();
         if (minDate != null) {
             criteria.andLogTimeGreaterThanOrEqualTo(minDate);
