@@ -1,33 +1,36 @@
 package net.renfei.server.core.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.io.Serializable;
 
 /**
  * Redis配置
  *
  * @author renfei
  */
+@Slf4j
 @Configuration
+@EnableCaching
 @RequiredArgsConstructor
 public class RedisConfig {
-    private final RedisProperties redisProperties;
-
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, Serializable> redisTemplate(LettuceConnectionFactory connectionFactory) {
+        final RedisTemplate<String, Serializable> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashKeySerializer(new GenericToStringSerializer<>(Object.class));
+        redisTemplate.setHashKeySerializer(new GenericToStringSerializer<>(Serializable.class));
         redisTemplate.setHashValueSerializer(new JdkSerializationRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setConnectionFactory(connectionFactory);
         return redisTemplate;
     }
 }
