@@ -30,7 +30,6 @@ public class SystemController extends BaseController {
 
     @Operation(summary = "查询系统版本信息", description = "查询系统版本信息")
     @GetMapping("/core/system/version")
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
     @AuditLog(module = MODULE_NAME, operation = "查询系统版本信息", descriptionExpression = "查询系统版本信息")
     public ApiResult<SystemVersionInfo> querySystemVersionInfo() {
         return new ApiResult<>(systemService.querySystemVersionInfo());
@@ -39,7 +38,7 @@ public class SystemController extends BaseController {
     @Operation(summary = "【危险】系统停机！",
             description = "【危险】系统停机，系统将主动停机！")
     @PostMapping("/core/system/shutdown")
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('system:shutdown:update')")
     public void shutdownSystem(HttpServletRequest request) {
         systemService.shutdownSystem(request);
     }

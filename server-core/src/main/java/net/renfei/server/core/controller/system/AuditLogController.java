@@ -66,7 +66,7 @@ public class AuditLogController extends BaseController {
             })
     @GetMapping("/core/system/audit/log")
     @AuditLog(module = MODULE_NAME, operation = "查询审计日志", descriptionExpression = "查询审计日志")
-    @PreAuthorize("hasRole('ROLE_MANAGER')")
+    @PreAuthorize("hasRole('MANAGER') and hasAuthority('system:auditlog:query')")
     public ApiResult<ListData<AuditLogEntity>> queryAuditLog(
             @RequestParam(value = "minDate", required = false) Date minDate,
             @RequestParam(value = "maxDate", required = false) Date maxDate,
