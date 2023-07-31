@@ -47,7 +47,7 @@ public class SecurityServiceImpl implements SecurityService {
             File resource = new ClassPathResource("weak-password-list.txt").getFile();
             try (FileInputStream fis = new FileInputStream(resource);
                  InputStreamReader isr = new InputStreamReader(fis);
-                 BufferedReader br = new BufferedReader(isr);) {
+                 BufferedReader br = new BufferedReader(isr)) {
                 String line;
                 while ((line = br.readLine()) != null) {
                     WEAK_PASSWORD_LIST.add(line);

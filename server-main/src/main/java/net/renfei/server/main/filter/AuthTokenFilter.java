@@ -82,7 +82,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             }
             RoleDetail roleDetail = new RoleDetail();
-            roleDetail.setRoleName("MANAGER");
+            roleDetail.setRoleEnName("MANAGER");
             userDetail.getAuthorities().add(roleDetail);
         } else {
             // 普通用户会员的 Token
@@ -101,7 +101,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 }
             }
             RoleDetail roleDetail = new RoleDetail();
-            roleDetail.setRoleName("MEMBER");
+            roleDetail.setRoleEnName("MEMBER");
             userDetail.getAuthorities().add(roleDetail);
         }
         UsernamePasswordAuthenticationToken

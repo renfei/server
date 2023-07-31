@@ -13,9 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 用户详情
@@ -65,11 +63,23 @@ public class UserDetail implements UserDetails, Serializable {
     private Boolean enabled;
     @Schema(description = "昵称")
     private String nickname;
-    private List<RoleDetail> roleDetails;
+    @Schema(description = "角色列表")
+    private Set<RoleDetail> roleDetails;
 
     @Override
-    public List<RoleDetail> getAuthorities() {
-        return this.roleDetails;
+    public Collection<GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new HashSet<>();
+        if (this.roleDetails != null && !this.roleDetails.isEmpty()) {
+            // 添加所有角色
+            authorities.addAll(this.roleDetails);
+            this.roleDetails.forEach(roleDetail -> {
+                if (roleDetail.getMenuDetails() != null && !roleDetail.getMenuDetails().isEmpty()) {
+                    // 递归添加添加角色下的菜单的权限
+                    this.recursivelyAdd(authorities, roleDetail.getMenuDetails());
+                }
+            });
+        }
+        return authorities;
     }
 
     @Override
@@ -103,5 +113,18 @@ public class UserDetail implements UserDetails, Serializable {
     @Override
     public boolean isEnabled() {
         return this.enabled;
+    }
+
+    /**
+     * 递归添加子菜单菜单的权限表达式
+     *
+     * @param authorities
+     * @param menuDetails
+     */
+    private void recursivelyAdd(Collection<GrantedAuthority> authorities, Set<MenuDetail> menuDetails) {
+        if (menuDetails != null && !menuDetails.isEmpty()) {
+            authorities.addAll(menuDetails);
+            menuDetails.forEach(menuDetail -> this.recursivelyAdd(authorities, menuDetail.getChildMenu()));
+        }
     }
 }

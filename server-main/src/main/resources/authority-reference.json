@@ -1,0 +1,12 @@
+[
+  {
+    "authority": "system:auditlog:query",
+    "name": "系统审计日志查询权限",
+    "describe": "查询审计日志的权限"
+  },
+  {
+    "authority": "system:shutdown:update",
+    "name": "【危险】系统停机权限",
+    "describe": "【危险】提供停机的权限"
+  }
+]
