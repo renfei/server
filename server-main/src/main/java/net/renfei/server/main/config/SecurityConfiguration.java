@@ -43,10 +43,6 @@ public class SecurityConfiguration {
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 
         http.authorizeHttpRequests(request -> {
-            request.requestMatchers(
-                    "/_/api/**",
-                    "/-/api/account/**"
-            ).authenticated();
             request.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
             request.anyRequest().permitAll();
         });
