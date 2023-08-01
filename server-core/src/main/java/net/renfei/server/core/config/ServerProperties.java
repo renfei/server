@@ -22,10 +22,23 @@ public class ServerProperties {
     private Boolean enableThreeMembers;
     private SecretLevelEnum systemMaxSecretLevel;
     private Jwt jwt;
+    private Leaf leaf;
+    private Zookeeper zookeeper;
 
     @Data
     public static class Jwt {
         private String secret;
         private Long tokenExpiration;
+    }
+
+    @Data
+    public static class Leaf {
+        private String name;
+    }
+
+    @Data
+    public static class Zookeeper {
+        private String address;
+        private Integer port;
     }
 }

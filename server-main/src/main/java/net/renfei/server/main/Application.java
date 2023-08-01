@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  */
 @EnableAsync
 @EnableFeignClients(basePackages = {"net.renfei.*"})
-@SpringBootApplication(scanBasePackages = {"net.renfei.**"})
+@SpringBootApplication(scanBasePackages = {"net.renfei.**", "com.sankuai.inf.leaf.**"})
 @MapperScan(basePackages = {"net.renfei.**.repositories"})
 public class Application {
     public static void main(String[] args) {

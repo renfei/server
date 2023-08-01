@@ -70,6 +70,11 @@ logging:
     root: info
     net.renfei.web.api: info
 
+zookeeper:
+  address: 127.0.0.1
+  port: 2181
+  timeout: 4000
+
 application:
   # 站点名称
   siteName: 任霏的博客
@@ -90,3 +95,8 @@ application:
     tokenExpiration: 28800
     # token 秘钥
     secret: DBPSbfAww5qJ2d9WTLarGpwa90n2PMqJq5q1sUuLx4MIrJsIVa4/AizFhUdpgNj4X2FB/CMdySNRwH1bR5f66A==
+  leaf:
+    name: leaf
+  zookeeper:
+    address: 127.0.0.1
+    port: 2181
