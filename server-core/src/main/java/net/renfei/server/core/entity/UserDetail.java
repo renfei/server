@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.renfei.server.core.constant.SecretLevelEnum;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +37,7 @@ public class UserDetail implements UserDetails, Serializable {
     @Schema(description = "电子邮箱")
     private String email;
     @Schema(description = "手机号")
-    private String phone;
+    private String mobile;
     @Schema(description = "注册时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -46,11 +47,15 @@ public class UserDetail implements UserDetails, Serializable {
     @Schema(description = "注册IP地址")
     private String registrationIp;
     @Schema(description = "密码错误次数")
-    private Integer trialErrorTimes;
+    private Integer errorCount;
     @Schema(description = "锁定时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date lockTime;
+    @Schema(description = "密码修改时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date passwordUpdateTime;
     @Schema(description = "是否是内置用户")
     private Boolean builtInUser;
     @Schema(description = "密码过期时间")
@@ -61,8 +66,40 @@ public class UserDetail implements UserDetails, Serializable {
     private Boolean locked;
     @Schema(description = "是否启用")
     private Boolean enabled;
-    @Schema(description = "昵称")
-    private String nickname;
+    @Schema(description = "姓名")
+    private String name;
+    @Schema(description = "一次性密码秘钥")
+    private String totp;
+    @Schema(description = "性别")
+    private String gender;
+    @Schema(description = "办公地址")
+    private String officeAddress;
+    @Schema(description = "办公电话")
+    private String officePhone;
+    @Schema(description = "保密等级")
+    private SecretLevelEnum secretLevel;
+    @Schema(description = "描述")
+    private String description;
+    @Schema(description = "生日")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date birthDay;
+    @Schema(description = "职务")
+    private String duty;
+    @Schema(description = "学历")
+    private String education;
+    @Schema(description = "家庭住址")
+    private String homeAddress;
+    @Schema(description = "家庭电话")
+    private String homePhone;
+    @Schema(description = "政治面貌")
+    private String politicalStatus;
+    @Schema(description = "专业")
+    private String professional;
+    @Schema(description = "参加工作时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date workDate;
     @Schema(description = "角色列表")
     private Set<RoleDetail> roleDetails;
 

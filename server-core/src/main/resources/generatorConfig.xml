@@ -37,5 +37,6 @@
         <!-- 数据库表 -->
         <table schema="renfei" tableName="sys_audit_log"></table>
         <table schema="renfei" tableName="sys_secret_key"></table>
+        <table schema="renfei" tableName="sys_user"></table>
     </context>
 </generatorConfiguration>

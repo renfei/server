@@ -24,4 +24,6 @@ public class SignInRequest implements Serializable {
     private String password;
     @Schema(description = "加密秘钥编号")
     private String keyId;
+    @Schema(description = "一次性密码")
+    private Integer totp;
 }
