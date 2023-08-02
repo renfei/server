@@ -2,10 +2,13 @@ package net.renfei.server.core.service;
 
 import jakarta.validation.constraints.NotNull;
 import net.renfei.server.core.entity.CloudflareDnsRecord;
+import net.renfei.server.core.entity.CloudflareIpAccessRule;
 import net.renfei.server.core.entity.CloudflareResponse;
 import net.renfei.server.core.entity.CloudflareResponses;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Cloudflare API V4
@@ -45,4 +48,15 @@ public interface CloudflareApiV4 {
     @DeleteMapping("/zones/{zone_identifier}/dns_records/{identifier}")
     CloudflareResponse<?> deleteDnsRecord(@PathVariable("zone_identifier") @NotNull String zoneIdentifier,
                                           @PathVariable("identifier") @NotNull String identifier);
+
+    @GetMapping("/accounts/{account_identifier}/firewall/access_rules/rules")
+    CloudflareResponses<CloudflareIpAccessRule> listIpAccessRules(@PathVariable("account_identifier") @NotNull String accountIdentifier);
+
+    @PostMapping("/accounts/{account_identifier}/firewall/access_rules/rules")
+    CloudflareResponse<CloudflareIpAccessRule> createIpAccessRules(@PathVariable("account_identifier") @NotNull String accountIdentifier,
+                                                                   @RequestBody CloudflareIpAccessRule cloudflareIpAccessRule);
+
+    @DeleteMapping("/accounts/{account_identifier}/firewall/access_rules/rules/{identifier}")
+    CloudflareResponse<Map<String, String>> deleteIpAccessRules(@PathVariable("account_identifier") @NotNull String accountIdentifier,
+                                                                @PathVariable("identifier") @NotNull String identifier);
 }
