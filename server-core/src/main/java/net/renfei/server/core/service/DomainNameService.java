@@ -37,7 +37,8 @@ public interface DomainNameService {
     /**
      * 删除DNS记录
      *
+     * @param zoneId   域名ID
      * @param recordId DNS记录ID
      */
-    void deleteDomainRecord(String recordId);
+    void deleteDomainRecord(String zoneId, String recordId);
 }

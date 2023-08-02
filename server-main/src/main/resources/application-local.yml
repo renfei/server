@@ -106,3 +106,5 @@ application:
     alidns:
       # Endpoint 请参考 https://api.aliyun.com/product/Alidns
       endpoint: dns.aliyuncs.com # 硅谷：alidns.us-west-1.aliyuncs.com
+  cloudflare:
+    token: token

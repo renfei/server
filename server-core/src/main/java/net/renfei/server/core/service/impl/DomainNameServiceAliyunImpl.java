@@ -140,7 +140,7 @@ public class DomainNameServiceAliyunImpl extends BaseService implements DomainNa
      * @param recordId DNS记录ID
      */
     @Override
-    public void deleteDomainRecord(String recordId) {
+    public void deleteDomainRecord(String zoneId, String recordId) {
         DeleteDomainRecordRequest request = new DeleteDomainRecordRequest();
         request.recordId = recordId;
         try {

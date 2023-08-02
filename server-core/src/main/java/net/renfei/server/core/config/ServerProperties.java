@@ -25,6 +25,7 @@ public class ServerProperties {
     private Leaf leaf;
     private Zookeeper zookeeper;
     private Aliyun aliyun;
+    private Cloudflare cloudflare;
 
     @Data
     public static class Jwt {
@@ -53,5 +54,10 @@ public class ServerProperties {
         public static class Alidns {
             private String endpoint;
         }
+    }
+
+    @Data
+    public static class Cloudflare {
+        private String token;
     }
 }
