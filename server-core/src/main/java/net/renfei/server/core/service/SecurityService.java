@@ -1,5 +1,6 @@
 package net.renfei.server.core.service;
 
+import jakarta.validation.constraints.NotNull;
 import net.renfei.server.core.constant.LogLevelEnum;
 import net.renfei.server.core.entity.AuditLogEntity;
 import net.renfei.server.core.entity.ListData;
@@ -65,4 +66,16 @@ public interface SecurityService {
     ListData<AuditLogEntity> queryAuditLog(Date minDate, Date maxDate, LogLevelEnum logLevel, String module,
                                            String username, String operation, String description, String requestMethod,
                                            String requestUri, String clientIp, int pages, int rows);
+
+    /**
+     * 插入审计日志
+     *
+     * @param logLevel      日志等级
+     * @param module        模块
+     * @param operation     操作
+     * @param description   详细描述
+     * @param executionTime 执行时间
+     */
+    void insertAuditLog(@NotNull LogLevelEnum logLevel, String module,
+                        String operation, String description, Long executionTime);
 }

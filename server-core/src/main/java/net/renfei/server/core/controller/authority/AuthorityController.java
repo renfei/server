@@ -13,6 +13,7 @@ import net.renfei.server.core.entity.payload.request.SignInRequest;
 import net.renfei.server.core.entity.payload.response.AuthorityReferenceResponse;
 import net.renfei.server.core.entity.payload.response.SignInResponse;
 import net.renfei.server.core.exception.BusinessException;
+import net.renfei.server.core.service.UserService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +33,14 @@ import java.util.Set;
 @Tag(name = "授权接口", description = "授权接口")
 public class AuthorityController extends BaseController {
     private final static String MODULE_NAME = "AUTHORITY";
+    private final UserService userService;
 
     @PostMapping("/core/authority/sign-in")
     @Operation(summary = "登录系统", description = "登录系统")
     @AuditLog(module = MODULE_NAME, operation = "请求登录系统"
             , descriptionExpression = "用户[#{[0].username}]请求登录系统")
     public ApiResult<SignInResponse> signIn(@RequestBody SignInRequest signInRequest) {
-        return null;
+        return new ApiResult<>(userService.signIn(signInRequest));
     }
 
     @GetMapping("/core/authority/reference")

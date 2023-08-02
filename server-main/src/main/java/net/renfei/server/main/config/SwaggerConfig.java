@@ -39,12 +39,6 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("Core")
                 .pathsToMatch("/api/core/**")
-                .addOperationCustomizer((operation, handlerMethod) -> operation
-                        .addParametersItem(new Parameter()
-                                .name(HttpHeaders.AUTHORIZATION)
-                                .description("认证 Token")
-                                .in(String.valueOf(io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER))
-                        ))
                 .build();
     }
 
@@ -53,12 +47,6 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("Member")
                 .pathsToMatch("/api/member/**")
-                .addOperationCustomizer((operation, handlerMethod) -> operation
-                        .addParametersItem(new Parameter()
-                                .name(HttpHeaders.AUTHORIZATION)
-                                .description("认证 Token")
-                                .in(String.valueOf(io.swagger.v3.oas.models.security.SecurityScheme.In.HEADER))
-                        ))
                 .build();
     }
 }

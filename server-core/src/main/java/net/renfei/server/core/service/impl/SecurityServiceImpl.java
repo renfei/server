@@ -2,12 +2,15 @@ package net.renfei.server.core.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.server.core.constant.LogLevelEnum;
 import net.renfei.server.core.entity.AuditLogEntity;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.SecretKey;
+import net.renfei.server.core.entity.UserDetail;
 import net.renfei.server.core.exception.BusinessException;
 import net.renfei.server.core.repositories.SysAuditLogMapper;
 import net.renfei.server.core.repositories.SysSecretKeyMapper;
@@ -15,8 +18,10 @@ import net.renfei.server.core.repositories.entity.SysAuditLogExample;
 import net.renfei.server.core.repositories.entity.SysAuditLogWithBLOBs;
 import net.renfei.server.core.repositories.entity.SysSecretKeyExample;
 import net.renfei.server.core.repositories.entity.SysSecretKeyWithBLOBs;
+import net.renfei.server.core.service.BaseService;
 import net.renfei.server.core.service.SecurityService;
 import net.renfei.server.core.utils.AesUtil;
+import net.renfei.server.core.utils.IpUtils;
 import net.renfei.server.core.utils.RsaUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -36,7 +41,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SecurityServiceImpl implements SecurityService {
+public class SecurityServiceImpl extends BaseService implements SecurityService {
     private final SysAuditLogMapper sysAuditLogMapper;
     private final SysSecretKeyMapper sysSecretKeyMapper;
     private final static Set<String> WEAK_PASSWORD_LIST;
@@ -233,6 +238,51 @@ public class SecurityServiceImpl implements SecurityService {
             page.forEach(sysAuditLog -> auditLogEntityList.add(this.convert(sysAuditLog)));
             return new ListData<>(page, auditLogEntityList);
         }
+    }
+
+    /**
+     * 插入审计日志
+     *
+     * @param logLevel      日志等级
+     * @param module        模块
+     * @param operation     操作
+     * @param description   详细描述
+     * @param executionTime 执行时间
+     */
+    @Override
+    public void insertAuditLog(@NotNull LogLevelEnum logLevel, String module,
+                               String operation, String description, Long executionTime) {
+        UserDetail currentUserDetail = getCurrentUserDetail();
+        HttpServletRequest currentRequest = getCurrentRequest();
+        SysAuditLogWithBLOBs sysAuditLog = new SysAuditLogWithBLOBs();
+        sysAuditLog.setUuid(UUID.randomUUID().toString());
+        sysAuditLog.setLogTime(new Date());
+        sysAuditLog.setLogLevel(logLevel.toString());
+        sysAuditLog.setModule(module);
+        sysAuditLog.setUsername(currentUserDetail != null ? currentUserDetail.getUsername() : "");
+        sysAuditLog.setOperation(operation);
+        sysAuditLog.setDescription(description);
+        sysAuditLog.setExecutionTime(executionTime != null ? executionTime : 0);
+        if (currentRequest != null) {
+            sysAuditLog.setRequestMethod(currentRequest.getMethod());
+            sysAuditLog.setRequestUri(currentRequest.getRequestURI());
+            sysAuditLog.setClientIp(IpUtils.getIpAddress(currentRequest));
+            sysAuditLog.setClientUserAgent(currentRequest.getHeader("User-Agent"));
+            sysAuditLog.setRequestReferer(currentRequest.getHeader("Referer"));
+            Map<String, String[]> parameterMap = currentRequest.getParameterMap();
+            if (!parameterMap.isEmpty()) {
+                StringBuilder stringBuilder = new StringBuilder();
+                parameterMap.forEach((k, v) -> stringBuilder
+                        .append(k)
+                        .append("=")
+                        .append(String.join(",", v))
+                        .append("&"));
+                sysAuditLog.setRequestParameter(stringBuilder.toString().endsWith("&") ?
+                        stringBuilder.substring(0, stringBuilder.length() - 1) :
+                        stringBuilder.toString());
+            }
+        }
+        sysAuditLogMapper.insertSelective(sysAuditLog);
     }
 
     private AuditLogEntity convert(SysAuditLogWithBLOBs sysAuditLog) {

@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.renfei.server.core.config.ServerProperties;
-import net.renfei.server.core.entity.RoleDetail;
 import net.renfei.server.core.entity.UserDetail;
 import net.renfei.server.core.service.RedisService;
 import net.renfei.server.core.service.UserService;
@@ -17,17 +16,13 @@ import net.renfei.server.member.service.MemberService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * JWT Token过滤器
@@ -81,9 +76,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     return;
                 }
             }
-            RoleDetail roleDetail = new RoleDetail();
-            roleDetail.setRoleEnName("MANAGER");
-            userDetail.getAuthorities().add(roleDetail);
         } else {
             // 普通用户会员的 Token
             userDetail = memberService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
@@ -100,9 +92,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     return;
                 }
             }
-            RoleDetail roleDetail = new RoleDetail();
-            roleDetail.setRoleEnName("MEMBER");
-            userDetail.getAuthorities().add(roleDetail);
         }
         UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(

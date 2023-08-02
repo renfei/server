@@ -20,6 +20,7 @@ public interface UserService extends UserDetailsService {
      * @throws UsernameNotFoundException
      */
     UserDetail loadUserByUsername(String username) throws UsernameNotFoundException;
+
     /**
      * 用户登录
      *

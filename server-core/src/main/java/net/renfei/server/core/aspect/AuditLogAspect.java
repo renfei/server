@@ -1,30 +1,18 @@
 package net.renfei.server.core.aspect;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.server.core.annotation.AuditLog;
-import net.renfei.server.core.entity.AuditLogEntity;
-import net.renfei.server.core.repositories.SysAuditLogMapper;
-import net.renfei.server.core.repositories.entity.SysAuditLogWithBLOBs;
-import net.renfei.server.core.utils.IpUtils;
+import net.renfei.server.core.service.SecurityService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.BeanUtils;
 import org.springframework.expression.Expression;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * 审计日志AOP切面
@@ -36,7 +24,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class AuditLogAspect {
-    private final SysAuditLogMapper sysAuditLogMapper;
+    private final SecurityService securityService;
 
     /**
      * 环绕通知
@@ -73,22 +61,7 @@ public class AuditLogAspect {
         String operation = auditLog.operation();
         String descriptionExpression = auditLog.descriptionExpression();
         String description = parseDescriptionExpression(args, descriptionExpression);
-        String uuid = UUID.randomUUID().toString();
-        AuditLogEntity auditLogEntity = AuditLogEntity.builder()
-                .uuid(uuid)
-                .logTime(new Date())
-                .logLevel(auditLog.logLevel())
-                .module(module)
-                .username("")
-                .operation(operation)
-                .description(description)
-                .executionTime(executionTime)
-                .build();
-        this.settingRequestInfo(auditLogEntity);
-        SysAuditLogWithBLOBs sysAuditLog = new SysAuditLogWithBLOBs();
-        BeanUtils.copyProperties(auditLogEntity, sysAuditLog);
-        sysAuditLog.setLogLevel(auditLogEntity.getLogLevel().toString());
-        sysAuditLogMapper.insertSelective(sysAuditLog);
+        securityService.insertAuditLog(auditLog.logLevel(), module, operation, description, executionTime);
     }
 
     /**
@@ -102,34 +75,5 @@ public class AuditLogAspect {
         SpelExpressionParser spelExpressionParser = new SpelExpressionParser();
         Expression expression = spelExpressionParser.parseExpression(descriptionExpression, new TemplateParserContext());
         return expression.getValue(new StandardEvaluationContext(args), String.class);
-    }
-
-    /**
-     * 设置请求信息
-     *
-     * @param auditLogEntity 审计日志对象
-     */
-    private void settingRequestInfo(AuditLogEntity auditLogEntity) {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        if (requestAttributes instanceof ServletRequestAttributes servletRequestAttributes) {
-            HttpServletRequest request = servletRequestAttributes.getRequest();
-            auditLogEntity.setRequestMethod(request.getMethod());
-            auditLogEntity.setRequestUri(request.getRequestURI());
-            auditLogEntity.setClientIp(IpUtils.getIpAddress(request));
-            auditLogEntity.setClientUserAgent(request.getHeader("User-Agent"));
-            auditLogEntity.setRequestReferer(request.getHeader("Referer"));
-            Map<String, String[]> parameterMap = request.getParameterMap();
-            if (!parameterMap.isEmpty()) {
-                StringBuilder stringBuilder = new StringBuilder();
-                parameterMap.forEach((k, v) -> stringBuilder
-                        .append(k)
-                        .append("=")
-                        .append(String.join(",", v))
-                        .append("&"));
-                auditLogEntity.setRequestParameter(stringBuilder.toString().endsWith("&") ?
-                        stringBuilder.substring(0, stringBuilder.length() - 1) :
-                        stringBuilder.toString());
-            }
-        }
     }
 }
