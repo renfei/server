@@ -100,3 +100,9 @@ application:
   zookeeper:
     address: 127.0.0.1
     port: 2181
+  aliyun:
+    accessKeyId: accessKeyId
+    accessKeySecret: accessKeySecret
+    alidns:
+      # Endpoint 请参考 https://api.aliyun.com/product/Alidns
+      endpoint: dns.aliyuncs.com # 硅谷：alidns.us-west-1.aliyuncs.com

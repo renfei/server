@@ -24,6 +24,7 @@ public class ServerProperties {
     private Jwt jwt;
     private Leaf leaf;
     private Zookeeper zookeeper;
+    private Aliyun aliyun;
 
     @Data
     public static class Jwt {
@@ -40,5 +41,17 @@ public class ServerProperties {
     public static class Zookeeper {
         private String address;
         private Integer port;
+    }
+
+    @Data
+    public static class Aliyun {
+        private String accessKeyId;
+        private String accessKeySecret;
+        private Alidns alidns;
+
+        @Data
+        public static class Alidns {
+            private String endpoint;
+        }
     }
 }

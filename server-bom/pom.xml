@@ -22,6 +22,7 @@
         <httpclient.version>5.2.1</httpclient.version>
         <curator-recipes.version>5.5.0</curator-recipes.version>
         <perf4j.version>0.9.16</perf4j.version>
+        <alidns.version>3.0.7</alidns.version>
     </properties>
 
     <dependencyManagement>
@@ -98,6 +99,11 @@
                 <groupId>org.perf4j</groupId>
                 <artifactId>perf4j</artifactId>
                 <version>${perf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>alidns20150109</artifactId>
+                <version>${alidns.version}</version>
             </dependency>
 
             <dependency>
