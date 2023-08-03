@@ -166,6 +166,7 @@ public class UserServiceImpl extends BaseService implements UserService {
     public ListData<UserDetail> querySystemUser(String username, String email,
                                                 String mobile, String name, int pages, int rows) {
         SysUserExample example = new SysUserExample();
+        example.setOrderByClause("createTime DESC");
         SysUserExample.Criteria criteria = example.createCriteria();
         criteria.andBuiltInEqualTo(false);
         if (StringUtils.hasLength(username)) {
@@ -235,7 +236,9 @@ public class UserServiceImpl extends BaseService implements UserService {
         Assert.hasLength(username, "用户名不能为空");
         Assert.notNull(userDetail, "请求体不能为空");
         SysUserExample example = new SysUserExample();
-        example.createCriteria().andUsernameEqualTo(username);
+        example.createCriteria()
+                .andBuiltInEqualTo(false)
+                .andUsernameEqualTo(username);
         List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
         Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
         SysUser sysUser = sysUsers.get(0);
@@ -279,7 +282,9 @@ public class UserServiceImpl extends BaseService implements UserService {
         Assert.hasLength(username, "用户名不能为空");
         Assert.notNull(secretLevelEnum, "密级不能为空");
         SysUserExample example = new SysUserExample();
-        example.createCriteria().andUsernameEqualTo(username);
+        example.createCriteria()
+                .andBuiltInEqualTo(false)
+                .andUsernameEqualTo(username);
         List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
         Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
         Assert.isTrue(!SecretLevelEnum.outOfSecretLevel(serverProperties.getSystemMaxSecretLevel(), secretLevelEnum)
@@ -304,7 +309,9 @@ public class UserServiceImpl extends BaseService implements UserService {
         Assert.notNull(settingPasswordRequest, "请求体不能为空");
         Assert.hasLength(settingPasswordRequest.getPassword(), "密码不能为空");
         SysUserExample example = new SysUserExample();
-        example.createCriteria().andUsernameEqualTo(username);
+        example.createCriteria()
+                .andBuiltInEqualTo(false)
+                .andUsernameEqualTo(username);
         List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
         Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
         if (StringUtils.hasLength(settingPasswordRequest.getKeyId())) {
@@ -333,7 +340,9 @@ public class UserServiceImpl extends BaseService implements UserService {
     public void enableUser(String username, boolean enable) {
         Assert.hasLength(username, "用户名不能为空");
         SysUserExample example = new SysUserExample();
-        example.createCriteria().andUsernameEqualTo(username);
+        example.createCriteria()
+                .andBuiltInEqualTo(false)
+                .andUsernameEqualTo(username);
         List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
         Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
         SysUser sysUser = sysUsers.get(0);
@@ -355,7 +364,9 @@ public class UserServiceImpl extends BaseService implements UserService {
     public void lockedUser(String username, boolean locked) {
         Assert.hasLength(username, "用户名不能为空");
         SysUserExample example = new SysUserExample();
-        example.createCriteria().andUsernameEqualTo(username);
+        example.createCriteria()
+                .andBuiltInEqualTo(false)
+                .andUsernameEqualTo(username);
         List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
         Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
         SysUser sysUser = sysUsers.get(0);
