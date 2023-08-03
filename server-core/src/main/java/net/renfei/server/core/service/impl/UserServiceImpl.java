@@ -30,10 +30,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * 用户服务
@@ -417,11 +414,11 @@ public class UserServiceImpl extends BaseService implements UserService {
         userDetail.setId(sysUser.getId().toString());
         userDetail.setRegistrationDate(sysUser.getCreateTime());
         userDetail.setSecretLevel(SecretLevelEnum.valueOf(sysUser.getSecretLevel()));
+        Set<RoleDetail> roleDetails = roleService.getRoleListByUsername(sysUser.getUsername().toLowerCase());
         RoleDetail managerRoledetail = new RoleDetail();
         managerRoledetail.setRoleEnName("MANAGER");
-        userDetail.setRoleDetails(new HashSet<>() {{
-            this.add(managerRoledetail);
-        }});
+        roleDetails.add(managerRoledetail);
+        userDetail.setRoleDetails(roleDetails);
         return userDetail;
     }
 

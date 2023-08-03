@@ -11,9 +11,12 @@ import net.renfei.server.core.entity.ApiResult;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.UserDetail;
 import net.renfei.server.core.entity.payload.request.SettingPasswordRequest;
+import net.renfei.server.core.service.RoleService;
 import net.renfei.server.core.service.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 /**
  * 用户接口
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController extends BaseController {
     private final static String MODULE_NAME = "USER";
     private final UserService userService;
+    private final RoleService roleService;
 
     @GetMapping("/core/user")
     @Operation(summary = "查询用户列表", description = "查询用户列表")
@@ -124,6 +128,17 @@ public class UserController extends BaseController {
     @PreAuthorize("hasRole('SYSTEM_SECURITY_OFFICER')")
     public ApiResult<?> unlockUser(@PathVariable("username") String username) {
         userService.lockedUser(username, false);
+        return ApiResult.success();
+    }
+
+    @PutMapping("/core/user/{username}/role")
+    @Operation(summary = "设置用户角色列表", description = "设置用户角色列表")
+    @AuditLog(module = MODULE_NAME, operation = "设置用户角色列表"
+            , descriptionExpression = "设置用户[#{[0]}]的角色列表")
+    @PreAuthorize("hasRole('SYSTEM_SECURITY_OFFICER')")
+    public ApiResult<?> settingUserRoles(@PathVariable("username") String username,
+                                         @RequestBody Set<String> roleNames) {
+        roleService.setRoleListByUsername(username, roleNames);
         return ApiResult.success();
     }
 }

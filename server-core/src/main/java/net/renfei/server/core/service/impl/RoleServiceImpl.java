@@ -7,8 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.RoleDetail;
 import net.renfei.server.core.repositories.SysRoleMapper;
+import net.renfei.server.core.repositories.SysUserRoleMapper;
 import net.renfei.server.core.repositories.entity.SysRole;
 import net.renfei.server.core.repositories.entity.SysRoleExample;
+import net.renfei.server.core.repositories.entity.SysUserRole;
+import net.renfei.server.core.repositories.entity.SysUserRoleExample;
 import net.renfei.server.core.service.BaseService;
 import net.renfei.server.core.service.MenuService;
 import net.renfei.server.core.service.RoleService;
@@ -18,9 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 角色服务
@@ -33,6 +34,7 @@ import java.util.List;
 public class RoleServiceImpl extends BaseService implements RoleService {
     private final MenuService menuService;
     private final SysRoleMapper sysRoleMapper;
+    private final SysUserRoleMapper sysUserRoleMapper;
 
     /**
      * 查询角色列表
@@ -123,7 +125,58 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         List<SysRole> sysRoles = sysRoleMapper.selectByExample(example);
         Assert.isTrue(!sysRoles.isEmpty(), "根据角色英文名未找到相应的角色");
         sysRoleMapper.deleteByPrimaryKey(sysRoles.get(0).getId());
-        // TODO 删除关联表
+        // 删除用户角色关联表
+        SysUserRoleExample userRoleExample = new SysUserRoleExample();
+        userRoleExample.createCriteria()
+                .andRoleNameEqualTo(roleEnName.toUpperCase());
+        sysUserRoleMapper.deleteByExample(userRoleExample);
+        // TODO 删除角色菜单资源关联表
+    }
+
+    /**
+     * 根据用户名获取角色列表
+     *
+     * @param username 用户名
+     * @return
+     */
+    @Override
+    public Set<RoleDetail> getRoleListByUsername(String username) {
+        SysUserRoleExample userRoleExample = new SysUserRoleExample();
+        userRoleExample.createCriteria()
+                .andUsernameEqualTo(username.toLowerCase());
+        List<SysUserRole> sysUserRoles = sysUserRoleMapper.selectByExample(userRoleExample);
+        List<String> roleNames = new ArrayList<>(sysUserRoles.size());
+        sysUserRoles.forEach(sysUserRole -> roleNames.add(sysUserRole.getRoleName().toUpperCase()));
+        SysRoleExample example = new SysRoleExample();
+        example.createCriteria()
+                .andRoleEnNameIn(roleNames);
+        List<SysRole> sysRoles = sysRoleMapper.selectByExampleWithBLOBs(example);
+        Set<RoleDetail> roleDetails = new HashSet<>();
+        sysRoles.forEach(sysRole -> roleDetails.add(this.convert(sysRole)));
+        return roleDetails;
+    }
+
+    /**
+     * 设置用户的角色列表
+     *
+     * @param username  用户名
+     * @param roleNames 角色列表
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void setRoleListByUsername(String username, Set<String> roleNames) {
+        // 先删再插
+        SysUserRoleExample userRoleExample = new SysUserRoleExample();
+        userRoleExample.createCriteria()
+                .andUsernameEqualTo(username.toLowerCase());
+        sysUserRoleMapper.deleteByExample(userRoleExample);
+        for (String roleName : roleNames) {
+            SysUserRole sysUserRole = new SysUserRole();
+            sysUserRole.setUsername(username);
+            sysUserRole.setRoleName(roleName);
+            sysUserRole.setAddTime(new Date());
+            sysUserRoleMapper.insertSelective(sysUserRole);
+        }
     }
 
     private RoleDetail convert(SysRole sysRole) {

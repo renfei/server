@@ -3,6 +3,8 @@ package net.renfei.server.core.service;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.RoleDetail;
 
+import java.util.Set;
+
 /**
  * 角色服务
  *
@@ -41,4 +43,20 @@ public interface RoleService {
      * @param roleEnName 角色英文名
      */
     void deleteRole(String roleEnName);
+
+    /**
+     * 根据用户名获取角色列表
+     *
+     * @param username 用户名
+     * @return
+     */
+    Set<RoleDetail> getRoleListByUsername(String username);
+
+    /**
+     * 设置用户的角色列表
+     *
+     * @param username  用户名
+     * @param roleNames 角色列表
+     */
+    void setRoleListByUsername(String username, Set<String> roleNames);
 }
