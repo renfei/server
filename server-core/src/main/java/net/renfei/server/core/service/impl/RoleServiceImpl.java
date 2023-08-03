@@ -74,7 +74,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         Assert.hasLength(roleDetail.getRoleEnName(), "角色英文名不能为空");
         Assert.hasLength(roleDetail.getRoleZhName(), "角色中文名不能为空");
         SysRoleExample example = new SysRoleExample();
-        example.createCriteria().andRoleEnNameEqualTo(roleDetail.getRoleEnName());
+        example.createCriteria().andRoleEnNameEqualTo(roleDetail.getRoleEnName().toUpperCase());
         Assert.isTrue(sysRoleMapper.selectByExample(example).isEmpty(), "角色英文名已经被占用，请更换一个重试。");
         SysRole sysRole = this.convert(roleDetail);
         sysRole.setId(null);
@@ -97,7 +97,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         SysRoleExample example = new SysRoleExample();
         example.createCriteria()
                 .andBuiltInRoleEqualTo(false)
-                .andRoleEnNameEqualTo(roleEnName);
+                .andRoleEnNameEqualTo(roleEnName.toUpperCase());
         List<SysRole> sysRoles = sysRoleMapper.selectByExample(example);
         Assert.isTrue(!sysRoles.isEmpty(), "根据角色英文名未找到相应的角色");
         SysRole sysRole = sysRoles.get(0);
@@ -119,7 +119,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         SysRoleExample example = new SysRoleExample();
         example.createCriteria()
                 .andBuiltInRoleEqualTo(false)
-                .andRoleEnNameEqualTo(roleEnName);
+                .andRoleEnNameEqualTo(roleEnName.toUpperCase());
         List<SysRole> sysRoles = sysRoleMapper.selectByExample(example);
         Assert.isTrue(!sysRoles.isEmpty(), "根据角色英文名未找到相应的角色");
         sysRoleMapper.deleteByPrimaryKey(sysRoles.get(0).getId());
@@ -132,6 +132,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         }
         RoleDetail roleDetail = new RoleDetail();
         BeanUtils.copyProperties(sysRole, roleDetail);
+        roleDetail.setRoleEnName(sysRole.getRoleEnName().toUpperCase());
         return roleDetail;
     }
 
@@ -141,6 +142,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         }
         SysRole sysRole = new SysRole();
         BeanUtils.copyProperties(roleDetail, sysRole);
+        sysRole.setRoleEnName(roleDetail.getRoleEnName().toUpperCase());
         return sysRole;
     }
 }
