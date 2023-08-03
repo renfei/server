@@ -50,6 +50,7 @@ public class UserServiceImpl extends BaseService implements UserService {
      */
     private final static int MAX_PASSWORD_ERROR_COUNT = 5;
     private final JwtUtil jwtUtil;
+    private final RoleService roleService;
     private final RedisService redisService;
     private final SysUserMapper sysUserMapper;
     private final SecurityService securityService;

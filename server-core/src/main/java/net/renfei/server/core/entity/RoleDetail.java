@@ -2,6 +2,7 @@ package net.renfei.server.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,9 +29,8 @@ public class RoleDetail implements GrantedAuthority, Serializable {
     private static final long serialVersionUID = -5194970536302876575L;
     @Schema(description = "角色ID")
     private String id;
-    @Schema(description = "客户端ID")
-    private String clientId;
     @Schema(description = "角色名称")
+    @NotNull
     private String roleEnName;
     @Schema(description = "角色中文名称")
     private String roleZhName;
