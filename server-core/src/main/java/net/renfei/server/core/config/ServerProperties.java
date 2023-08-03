@@ -21,6 +21,7 @@ public class ServerProperties {
     private Boolean enableCustomEncryption;
     private Boolean enableThreeMembers;
     private SecretLevelEnum systemMaxSecretLevel;
+    private String defaultPassword;
     private Jwt jwt;
     private Leaf leaf;
     private Zookeeper zookeeper;

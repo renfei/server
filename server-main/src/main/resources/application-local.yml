@@ -90,6 +90,8 @@ application:
   enableThreeMembers: false
   # 系统最大涉密等级：net.renfei.web.api.constant.SecretLevelEnum
   systemMaxSecretLevel: UNCLASSIFIED
+  # 默认密码
+  defaultPassword: sha512:18:18:bEVdLY/+VYovIpCL/3KDERPXrEUSqdT6:XvWY2WUMNp5ms0xKzk2glODt
   jwt:
     # token 过期时间 8*60*60=28800 秒
     tokenExpiration: 28800

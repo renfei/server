@@ -47,6 +47,13 @@ public interface SecurityService {
     String decryptAesByKeyId(String string, String keyId);
 
     /**
+     * 清除 Token 缓存（强制登出）
+     *
+     * @param username 用户名
+     */
+    void cleanTokenCache(String username);
+
+    /**
      * 查询审计日志
      *
      * @param minDate       开始时间

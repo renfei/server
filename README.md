@@ -3,6 +3,10 @@
 [![License](https://img.shields.io/github/license/renfei/server)](https://github.com/renfei/server/blob/master/LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/347656db64164c759c755241f8534bbd)](https://app.codacy.com/gh/renfei/server/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
+> [!NOTE]  
+> 我在设计之初就参考了涉密系统三员的要求，三员相关的文档请参见：[./docs/Classified-Manager-3.md](./docs/Classified-Manager-3.md)。  
+> 用户分为后台用户 SYSUser 和前台会员 Member，不同的表，不同的管理方式。
+
 ## 技术栈
 
 此版本在构建时选择了：

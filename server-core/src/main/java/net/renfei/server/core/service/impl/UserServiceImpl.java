@@ -7,6 +7,7 @@ import net.renfei.server.core.constant.LogLevelEnum;
 import net.renfei.server.core.constant.SecretLevelEnum;
 import net.renfei.server.core.entity.RoleDetail;
 import net.renfei.server.core.entity.UserDetail;
+import net.renfei.server.core.entity.payload.request.SettingPasswordRequest;
 import net.renfei.server.core.entity.payload.request.SignInRequest;
 import net.renfei.server.core.entity.payload.response.SignInResponse;
 import net.renfei.server.core.exception.BusinessException;
@@ -15,12 +16,14 @@ import net.renfei.server.core.repositories.SysUserMapper;
 import net.renfei.server.core.repositories.entity.SysUser;
 import net.renfei.server.core.repositories.entity.SysUserExample;
 import net.renfei.server.core.service.*;
+import net.renfei.server.core.utils.IpUtils;
 import net.renfei.server.core.utils.JwtUtil;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
@@ -84,6 +87,9 @@ public class UserServiceImpl extends BaseService implements UserService {
             userDetail = this.loadUserByUsername(signInRequest.getUsername());
         } catch (UsernameNotFoundException e) {
             throw new BusinessException("用户名或密码错误，请重试。");
+        }
+        if (serverProperties.getDefaultPassword().equals(userDetail.getPassword())) {
+            throw new BusinessException("您的账户密码为初始密码，请联系系统安全保密员修改密码后使用您的账户。");
         }
         if (StringUtils.hasLength(userDetail.getTotp())
                 && signInRequest.getTotp() == null) {
@@ -154,6 +160,187 @@ public class UserServiceImpl extends BaseService implements UserService {
     }
 
     /**
+     * 创建系统用户（后台）
+     *
+     * @param userDetail 用户详情
+     */
+    @Override
+    public void createSystemUser(UserDetail userDetail) {
+        Assert.notNull(userDetail, "请求体不能为空");
+        Assert.hasLength(userDetail.getUsername(), "用户名不能为空");
+        SysUserExample example = new SysUserExample();
+        example.createCriteria().andUsernameEqualTo(userDetail.getUsername().toLowerCase());
+        Assert.isTrue(sysUserMapper.selectByExample(example).isEmpty(), "用户名已经被占用，请更换一个重试。");
+        if (StringUtils.hasLength(userDetail.getEmail())) {
+            example = new SysUserExample();
+            example.createCriteria().andEmailEqualTo(userDetail.getEmail().toLowerCase());
+            Assert.isTrue(sysUserMapper.selectByExample(example).isEmpty(), "电子邮箱已经被占用，请更换一个重试。");
+        }
+        if (StringUtils.hasLength(userDetail.getMobile())) {
+            example = new SysUserExample();
+            example.createCriteria().andMobileEqualTo(userDetail.getMobile().toLowerCase());
+            Assert.isTrue(sysUserMapper.selectByExample(example).isEmpty(), "手机号已经被占用，请更换一个重试。");
+        }
+        SysUser sysUser = this.convert(userDetail);
+        sysUser.setId(null);
+        sysUser.setPassword(serverProperties.getDefaultPassword());
+        sysUser.setTotp(null);
+        sysUser.setCreateTime(new Date());
+        sysUser.setBuiltIn(false);
+        sysUser.setSecretLevel(SecretLevelEnum.UNCLASSIFIED.getLevel());
+        sysUser.setLocked(false);
+        sysUser.setEnabled(false);
+        sysUser.setRegistrationIp(IpUtils.getIpAddress(getCurrentRequest()));
+        sysUser.setUpdateTime(new Date());
+        sysUserMapper.insertSelective(sysUser);
+    }
+
+    /**
+     * 更新用户资料，只能更新基础资料，不会更新密码等信息
+     *
+     * @param username   用户名
+     * @param userDetail 用户详情对象
+     */
+    @Override
+    public void updateSystemUser(String username, UserDetail userDetail) {
+        Assert.hasLength(username, "用户名不能为空");
+        Assert.notNull(userDetail, "请求体不能为空");
+        SysUserExample example = new SysUserExample();
+        example.createCriteria().andUsernameEqualTo(username);
+        List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
+        Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
+        SysUser sysUser = sysUsers.get(0);
+        if (StringUtils.hasLength(userDetail.getEmail())
+                && !userDetail.getEmail().equals(sysUser.getEmail())) {
+            example = new SysUserExample();
+            example.createCriteria().andEmailEqualTo(userDetail.getEmail().toLowerCase());
+            Assert.isTrue(sysUserMapper.selectByExample(example).isEmpty(), "电子邮箱已经被占用，请更换一个重试。");
+        }
+        if (StringUtils.hasLength(userDetail.getMobile())
+                && !userDetail.getMobile().equals(sysUser.getMobile())) {
+            example = new SysUserExample();
+            example.createCriteria().andMobileEqualTo(userDetail.getMobile().toLowerCase());
+            Assert.isTrue(sysUserMapper.selectByExample(example).isEmpty(), "手机号已经被占用，请更换一个重试。");
+        }
+        sysUser.setName(userDetail.getName());
+        sysUser.setGender(userDetail.getGender());
+        sysUser.setOfficeAddress(userDetail.getOfficeAddress());
+        sysUser.setOfficePhone(userDetail.getOfficePhone());
+        sysUser.setDescription(userDetail.getDescription());
+        sysUser.setBirthDay(userDetail.getBirthDay());
+        sysUser.setDuty(userDetail.getDuty());
+        sysUser.setEducation(userDetail.getEducation());
+        sysUser.setHomeAddress(userDetail.getHomeAddress());
+        sysUser.setHomePhone(userDetail.getHomePhone());
+        sysUser.setPoliticalStatus(userDetail.getPoliticalStatus());
+        sysUser.setProfessional(userDetail.getProfessional());
+        sysUser.setWorkDate(userDetail.getWorkDate());
+        sysUser.setUpdateTime(new Date());
+        sysUserMapper.updateByPrimaryKey(sysUser);
+    }
+
+    /**
+     * 用户定密
+     *
+     * @param username        用户名
+     * @param secretLevelEnum 密级
+     */
+    @Override
+    public void settingUserSecretLevel(String username, SecretLevelEnum secretLevelEnum) {
+        Assert.hasLength(username, "用户名不能为空");
+        Assert.notNull(secretLevelEnum, "密级不能为空");
+        SysUserExample example = new SysUserExample();
+        example.createCriteria().andUsernameEqualTo(username);
+        List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
+        Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
+        Assert.isTrue(!SecretLevelEnum.outOfSecretLevel(serverProperties.getSystemMaxSecretLevel(), secretLevelEnum)
+                , "设置的密级不能大于系统允许的最大密级");
+        Assert.isTrue(!SecretLevelEnum.outOfSecretLevel(getCurrentUserDetail().getSecretLevel(), secretLevelEnum)
+                , "设置的密级不能大于您自己账号的密级");
+        SysUser sysUser = sysUsers.get(0);
+        sysUser.setSecretLevel(secretLevelEnum.getLevel());
+        sysUser.setUpdateTime(new Date());
+        sysUserMapper.updateByPrimaryKeySelective(sysUser);
+    }
+
+    /**
+     * 设置用户密码
+     *
+     * @param username               用户名
+     * @param settingPasswordRequest 密码
+     */
+    @Override
+    public void settingUserPassword(String username, SettingPasswordRequest settingPasswordRequest) {
+        Assert.hasLength(username, "用户名不能为空");
+        Assert.notNull(settingPasswordRequest, "请求体不能为空");
+        Assert.hasLength(settingPasswordRequest.getPassword(), "密码不能为空");
+        SysUserExample example = new SysUserExample();
+        example.createCriteria().andUsernameEqualTo(username);
+        List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
+        Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
+        if (StringUtils.hasLength(settingPasswordRequest.getKeyId())) {
+            settingPasswordRequest.setPassword(
+                    securityService.decryptAesByKeyId(settingPasswordRequest.getPassword(),
+                            settingPasswordRequest.getKeyId()));
+        }
+        Assert.isTrue(securityService.weakPasswordCheck(settingPasswordRequest.getPassword()),
+                "该密码为弱密码，请更换一个强密码，重试");
+        SysUser sysUser = sysUsers.get(0);
+        sysUser.setPassword(settingPasswordRequest.getPassword());
+        sysUser.setPasswordUpdateTime(new Date());
+        // TODO 查询密码有效期设置，设置密码有效期
+        sysUser.setUpdateTime(new Date());
+        sysUserMapper.updateByPrimaryKeySelective(sysUser);
+        securityService.cleanTokenCache(username);
+    }
+
+    /**
+     * 启用或禁用用户
+     *
+     * @param username 用户名
+     * @param enable   启用或禁用
+     */
+    @Override
+    public void enableUser(String username, boolean enable) {
+        Assert.hasLength(username, "用户名不能为空");
+        SysUserExample example = new SysUserExample();
+        example.createCriteria().andUsernameEqualTo(username);
+        List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
+        Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
+        SysUser sysUser = sysUsers.get(0);
+        sysUser.setEnabled(enable);
+        sysUser.setUpdateTime(new Date());
+        sysUserMapper.updateByPrimaryKeySelective(sysUser);
+        if (!enable) {
+            securityService.cleanTokenCache(username);
+        }
+    }
+
+    /**
+     * 锁定或解锁用户
+     *
+     * @param username 用户名
+     * @param locked   锁定或解锁
+     */
+    @Override
+    public void lockedUser(String username, boolean locked) {
+        Assert.hasLength(username, "用户名不能为空");
+        SysUserExample example = new SysUserExample();
+        example.createCriteria().andUsernameEqualTo(username);
+        List<SysUser> sysUsers = sysUserMapper.selectByExample(example);
+        Assert.isTrue(!sysUsers.isEmpty(), "根据用户名未能找到用户");
+        SysUser sysUser = sysUsers.get(0);
+        sysUser.setLocked(locked);
+        sysUser.setErrorCount(0);
+        sysUser.setLockTime(null);
+        sysUser.setUpdateTime(new Date());
+        sysUserMapper.updateByPrimaryKey(sysUser);
+        if (locked) {
+            securityService.cleanTokenCache(username);
+        }
+    }
+
+    /**
      * 记录密码错误事件
      *
      * @param userDetail 用户
@@ -195,5 +382,17 @@ public class UserServiceImpl extends BaseService implements UserService {
             this.add(managerRoledetail);
         }});
         return userDetail;
+    }
+
+    private SysUser convert(UserDetail userDetail) {
+        if (userDetail == null) {
+            return null;
+        }
+        SysUser sysUser = new SysUser();
+        BeanUtils.copyProperties(userDetail, sysUser);
+        sysUser.setId(userDetail.getId() == null ? null : Long.valueOf(userDetail.getId()));
+        sysUser.setCreateTime(userDetail.getRegistrationDate());
+        sysUser.setSecretLevel(userDetail.getSecretLevel().getLevel());
+        return sysUser;
     }
 }

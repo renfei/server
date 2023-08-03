@@ -5,21 +5,29 @@
 系统设计时采用了系统管理员、安全保密管理员、安全审计管理员三员分立，分别负责系统的运行、安全保密和安全审计工作。
 三员权限划分如下：
 
-> *warning*  
+> [!WARNING]  
 > 三员相关的账号、角色均为内置，不会在管理界面中显示，也禁止任何用户编辑，只能由软件开发厂商进行修改相关配置。
+> 安全要求不允许存在超级管理员，所以没有超级管理员，必须切换账号进行操作，例如：
+> * 系统管理员：添加用户账户
+> * 安全保密员：启用用户账户、给用户账户设置密码、给用户定密
+> * 用户账户正常使用
 
 ### 系统管理员
 
+> [!IMPORTANT]  
 > System Manage Officer  
-> 账号：SMO；角色名：SYSTEM_MANAGE_OFFICER
+> 账号：SMO；
+> 角色名：SYSTEM_MANAGE_OFFICER
 
 * 负责系统的日常运行维护工作
 * 负责系统用户创建、用户删除
 
 ### 安全保密员
 
+> [!IMPORTANT]  
 > System Security Officer  
-> 账号：SSO；角色名：SYSTEM_SECURITY_OFFICER
+> 账号：SSO；
+> 角色名：SYSTEM_SECURITY_OFFICER
 
 * 负责系统的日常安全保密管理工作
 * 负责系统用户修改、用户密码重置、停启、定密
@@ -28,8 +36,10 @@
 
 ### 安全审计员
 
+> [!IMPORTANT]  
 > System Security Auditor  
-> 账号：SSA；角色名：SYSTEM_SECURITY_AUDITOR
+> 账号：SSA；
+> 角色名：SYSTEM_SECURITY_AUDITOR
 
 * 负责对系统管理员和安全保密管理员的日常操作行为进行审计跟踪分析和监督检查
 * 审计管理员禁止访问管理平台安装的系统文件和直接访问数据库

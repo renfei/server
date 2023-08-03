@@ -19,6 +19,7 @@ import net.renfei.server.core.repositories.entity.SysAuditLogWithBLOBs;
 import net.renfei.server.core.repositories.entity.SysSecretKeyExample;
 import net.renfei.server.core.repositories.entity.SysSecretKeyWithBLOBs;
 import net.renfei.server.core.service.BaseService;
+import net.renfei.server.core.service.RedisService;
 import net.renfei.server.core.service.SecurityService;
 import net.renfei.server.core.utils.AesUtil;
 import net.renfei.server.core.utils.IpUtils;
@@ -42,6 +43,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class SecurityServiceImpl extends BaseService implements SecurityService {
+    private final RedisService redisService;
     private final SysAuditLogMapper sysAuditLogMapper;
     private final SysSecretKeyMapper sysSecretKeyMapper;
     private final static Set<String> WEAK_PASSWORD_LIST;
@@ -176,6 +178,16 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
             log.error(ex.getMessage(), ex);
             throw new BusinessException("密文解密失败");
         }
+    }
+
+    /**
+     * 清除 Token 缓存（强制登出）
+     *
+     * @param username 用户名
+     */
+    @Override
+    public void cleanTokenCache(String username) {
+        redisService.delete(RedisService.AUTH_TOKEN_KEY + "MANAGER:" + username);
     }
 
     /**
