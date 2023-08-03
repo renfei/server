@@ -1,5 +1,10 @@
 [
   {
+    "authority": "system:user:query",
+    "name": "查询用户列表",
+    "describe": "查询用户列表"
+  },
+  {
     "authority": "system:auditlog:query",
     "name": "系统审计日志查询权限",
     "describe": "查询审计日志的权限"

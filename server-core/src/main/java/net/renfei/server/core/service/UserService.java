@@ -1,6 +1,7 @@
 package net.renfei.server.core.service;
 
 import net.renfei.server.core.constant.SecretLevelEnum;
+import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.UserDetail;
 import net.renfei.server.core.entity.payload.request.SettingPasswordRequest;
 import net.renfei.server.core.entity.payload.request.SignInRequest;
@@ -30,6 +31,19 @@ public interface UserService extends UserDetailsService {
      * @return
      */
     SignInResponse signIn(SignInRequest signInRequest);
+
+    /**
+     * 查询用户列表
+     *
+     * @param username 用户名
+     * @param email    电子邮箱
+     * @param mobile   手机号
+     * @param name     姓名
+     * @param pages    页码
+     * @param rows     每页容量
+     * @return
+     */
+    ListData<UserDetail> querySystemUser(String username, String email, String mobile, String name, int pages, int rows);
 
     /**
      * 创建系统用户（后台）

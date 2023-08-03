@@ -1,10 +1,13 @@
 package net.renfei.server.core.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.server.core.config.ServerProperties;
 import net.renfei.server.core.constant.LogLevelEnum;
 import net.renfei.server.core.constant.SecretLevelEnum;
+import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.RoleDetail;
 import net.renfei.server.core.entity.UserDetail;
 import net.renfei.server.core.entity.payload.request.SettingPasswordRequest;
@@ -27,6 +30,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -157,6 +161,31 @@ public class UserServiceImpl extends BaseService implements UserService {
         return SignInResponse.builder()
                 .accessToken(token)
                 .build();
+    }
+
+    public ListData<UserDetail> querySystemUser(String username, String email,
+                                                String mobile, String name, int pages, int rows) {
+        SysUserExample example = new SysUserExample();
+        SysUserExample.Criteria criteria = example.createCriteria();
+        criteria.andBuiltInEqualTo(false);
+        if (StringUtils.hasLength(username)) {
+            criteria.andUsernameLike("%" + username + "%");
+        }
+        if (StringUtils.hasLength(email)) {
+            criteria.andEmailLike("%" + email + "%");
+        }
+        if (StringUtils.hasLength(mobile)) {
+            criteria.andMobileLike("%" + mobile + "%");
+        }
+        if (StringUtils.hasLength(name)) {
+            criteria.andNameLike("%" + name + "%");
+        }
+        try (Page<SysUser> page = PageHelper.startPage(pages, rows)) {
+            sysUserMapper.selectByExample(example);
+            List<UserDetail> userDetails = new ArrayList<>(page.size());
+            page.forEach(sysUser -> userDetails.add(this.convert(sysUser)));
+            return new ListData<>(page, userDetails);
+        }
     }
 
     /**

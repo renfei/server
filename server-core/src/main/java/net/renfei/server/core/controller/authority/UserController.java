@@ -8,6 +8,7 @@ import net.renfei.server.core.annotation.AuditLog;
 import net.renfei.server.core.constant.SecretLevelEnum;
 import net.renfei.server.core.controller.BaseController;
 import net.renfei.server.core.entity.ApiResult;
+import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.UserDetail;
 import net.renfei.server.core.entity.payload.request.SettingPasswordRequest;
 import net.renfei.server.core.service.UserService;
@@ -27,6 +28,21 @@ import org.springframework.web.bind.annotation.*;
 public class UserController extends BaseController {
     private final static String MODULE_NAME = "USER";
     private final UserService userService;
+
+    @GetMapping("/core/user")
+    @Operation(summary = "查询用户列表", description = "查询用户列表")
+    @AuditLog(module = MODULE_NAME, operation = "查询用户列表"
+            , descriptionExpression = "查询用户列表")
+    @PreAuthorize("hasAnyRole('SYSTEM_MANAGE_OFFICER','SYSTEM_SECURITY_OFFICER') or hasAuthority('system:user:query')")
+    public ApiResult<ListData<UserDetail>> querySystemUser(
+            @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "mobile", required = false) String mobile,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "pages", required = false, defaultValue = "1") int pages,
+            @RequestParam(value = "rows", required = false, defaultValue = "10") int rows) {
+        return new ApiResult<>(userService.querySystemUser(username, email, mobile, name, pages, rows));
+    }
 
     @PostMapping("/core/user")
     @Operation(summary = "创建用户账号", description = "创建用户账号")
