@@ -158,7 +158,7 @@ public class UserDetail implements UserDetails, Serializable {
      * @param authorities
      * @param menuDetails
      */
-    private void recursivelyAdd(Collection<GrantedAuthority> authorities, Set<MenuDetail> menuDetails) {
+    private void recursivelyAdd(Collection<GrantedAuthority> authorities, List<MenuDetail> menuDetails) {
         if (menuDetails != null && !menuDetails.isEmpty()) {
             authorities.addAll(menuDetails);
             menuDetails.forEach(menuDetail -> this.recursivelyAdd(authorities, menuDetail.getChildMenu()));

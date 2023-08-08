@@ -40,5 +40,6 @@
         <table schema="renfei" tableName="sys_user"></table>
         <table schema="renfei" tableName="sys_role"></table>
         <table schema="renfei" tableName="sys_user_role"></table>
+        <table schema="renfei" tableName="sys_menu"></table>
     </context>
 </generatorConfiguration>

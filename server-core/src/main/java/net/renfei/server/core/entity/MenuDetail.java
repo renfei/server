@@ -2,6 +2,7 @@ package net.renfei.server.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 /**
  * 菜单与授权
@@ -30,8 +31,10 @@ public class MenuDetail implements GrantedAuthority, Serializable {
     private String id;
     @Schema(description = "父级ID")
     private String pid;
+    @NotNull
     @Schema(description = "类型：菜单、按钮、接口")
     private MenuTypeEnum menuType;
+    @NotNull
     @Schema(description = "菜单名称")
     private String menuName;
     @Schema(description = "菜单图标")
@@ -46,8 +49,8 @@ public class MenuDetail implements GrantedAuthority, Serializable {
     private String menuTitle;
     @Schema(description = "点击事件")
     private String menuOnclick;
-    @Schema(description = "菜单排序")
-    private String menuOrder;
+    @Schema(description = "菜单排序:升序")
+    private Integer menuOrder;
     @Schema(description = "添加时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -63,7 +66,7 @@ public class MenuDetail implements GrantedAuthority, Serializable {
     @Schema(title = "授权表达式")
     private String authority;
     @Schema(description = "子菜单")
-    private Set<MenuDetail> childMenu;
+    private List<MenuDetail> childMenu;
 
     @Override
     public String getAuthority() {

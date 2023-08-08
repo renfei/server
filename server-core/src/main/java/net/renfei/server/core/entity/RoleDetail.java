@@ -12,7 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 /**
  * 角色对象
@@ -49,7 +49,7 @@ public class RoleDetail implements GrantedAuthority, Serializable {
     @Schema(description = "扩展预留")
     private String extendJson;
     @Schema(description = "菜单")
-    private Set<MenuDetail> menuDetails;
+    private List<MenuDetail> menuDetails;
 
     @Override
     public String getAuthority() {
