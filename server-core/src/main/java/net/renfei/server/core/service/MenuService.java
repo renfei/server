@@ -5,6 +5,7 @@ import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.MenuDetail;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 菜单（权限资源）服务
@@ -55,4 +56,20 @@ public interface MenuService {
      * @param id 菜单ID
      */
     void deleteMenu(Long id);
+
+    /**
+     * 根据角色名获取菜单列表
+     *
+     * @param roleName 角色名
+     * @return
+     */
+    List<MenuDetail> getMenuListByRoleName(String roleName);
+
+    /**
+     * 根据角色名设置菜单关系
+     *
+     * @param roleName 角色名
+     * @param ids      菜单ID列表
+     */
+    void setMenuListByRoleName(String roleName, Set<Long> ids);
 }

@@ -186,6 +186,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         RoleDetail roleDetail = new RoleDetail();
         BeanUtils.copyProperties(sysRole, roleDetail);
         roleDetail.setRoleEnName(sysRole.getRoleEnName().toUpperCase());
+        roleDetail.setMenuDetails(menuService.getMenuListByRoleName(sysRole.getRoleEnName()));
         return roleDetail;
     }
 

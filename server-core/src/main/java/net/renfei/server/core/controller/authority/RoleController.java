@@ -9,9 +9,12 @@ import net.renfei.server.core.controller.BaseController;
 import net.renfei.server.core.entity.ApiResult;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.RoleDetail;
+import net.renfei.server.core.service.MenuService;
 import net.renfei.server.core.service.RoleService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 /**
  * 角色接口
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 public class RoleController extends BaseController {
     private final static String MODULE_NAME = "ROLE";
     private final RoleService roleService;
+    private final MenuService menuService;
 
     @GetMapping("/core/role")
     @Operation(summary = "查询角色列表", description = "查询角色列表")
@@ -68,6 +72,17 @@ public class RoleController extends BaseController {
     @PreAuthorize("hasRole('SYSTEM_SECURITY_OFFICER')")
     public ApiResult<?> deleteRole(@PathVariable("roleEnName") String roleEnName) {
         roleService.deleteRole(roleEnName);
+        return ApiResult.success();
+    }
+
+    @PutMapping("/core/role/{roleEnName}/menus")
+    @Operation(summary = "设置角色拥有的菜单资源", description = "设置角色拥有的菜单资源")
+    @AuditLog(module = MODULE_NAME, operation = "设置角色拥有的菜单资源"
+            , descriptionExpression = "设置角色[#{[0]}]的菜单资源列表")
+    @PreAuthorize("hasRole('SYSTEM_SECURITY_OFFICER')")
+    public ApiResult<?> setMenuListByRoleName(@PathVariable("roleEnName") String username,
+                                              @RequestBody Set<Long> menuIds) {
+        menuService.setMenuListByRoleName(username, menuIds);
         return ApiResult.success();
     }
 }

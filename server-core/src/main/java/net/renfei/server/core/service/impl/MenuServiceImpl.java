@@ -8,8 +8,11 @@ import net.renfei.server.core.constant.MenuTypeEnum;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.MenuDetail;
 import net.renfei.server.core.repositories.SysMenuMapper;
+import net.renfei.server.core.repositories.SysRoleMenuMapper;
 import net.renfei.server.core.repositories.entity.SysMenuExample;
 import net.renfei.server.core.repositories.entity.SysMenuWithBLOBs;
+import net.renfei.server.core.repositories.entity.SysRoleMenu;
+import net.renfei.server.core.repositories.entity.SysRoleMenuExample;
 import net.renfei.server.core.service.BaseService;
 import net.renfei.server.core.service.MenuService;
 import net.renfei.server.core.service.SystemService;
@@ -21,6 +24,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 菜单（权限资源）服务
@@ -33,6 +37,7 @@ import java.util.List;
 public class MenuServiceImpl extends BaseService implements MenuService {
     private final SysMenuMapper sysMenuMapper;
     private final SystemService systemService;
+    private final SysRoleMenuMapper sysRoleMenuMapper;
 
     /**
      * 获取全部菜单树
@@ -148,7 +153,59 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteMenu(Long id) {
         sysMenuMapper.deleteByPrimaryKey(id);
-        // TODO 删除关联表
+        // 删除关联表
+        SysRoleMenuExample example = new SysRoleMenuExample();
+        example.createCriteria()
+                .andMenuIdEqualTo(id);
+        sysRoleMenuMapper.deleteByExample(example);
+    }
+
+    /**
+     * 根据角色名获取菜单列表
+     *
+     * @param roleName 角色名
+     * @return
+     */
+    @Override
+    public List<MenuDetail> getMenuListByRoleName(String roleName) {
+        if (!StringUtils.hasLength(roleName)) {
+            return null;
+        }
+        SysRoleMenuExample roleMenuExample = new SysRoleMenuExample();
+        roleMenuExample.createCriteria()
+                .andRoleNameEqualTo(roleName);
+        List<SysRoleMenu> sysRoleMenus = sysRoleMenuMapper.selectByExample(roleMenuExample);
+        if (sysRoleMenus.isEmpty()) {
+            return null;
+        }
+        List<Long> menuIds = new ArrayList<>(sysRoleMenus.size());
+        sysRoleMenus.forEach(sysRoleMenu -> menuIds.add(sysRoleMenu.getMenuId()));
+        SysMenuExample example = new SysMenuExample();
+        example.createCriteria().andIdIn(menuIds);
+        List<SysMenuWithBLOBs> sysMenus = sysMenuMapper.selectByExampleWithBLOBs(example);
+        if (sysMenus.isEmpty()) {
+            return null;
+        }
+        List<MenuDetail> menuDetails = new ArrayList<>(sysMenus.size());
+        sysMenus.forEach(sysMenu -> menuDetails.add(this.convert(sysMenu)));
+        return menuDetails;
+    }
+
+    /**
+     * 根据角色名设置菜单关系
+     *
+     * @param roleName 角色名
+     * @param ids      菜单ID列表
+     */
+    @Override
+    public void setMenuListByRoleName(String roleName, Set<Long> ids) {
+        assert StringUtils.hasLength(roleName) : "角色名不能为空";
+        for (Long id : ids) {
+            SysRoleMenu sysRoleMenu = new SysRoleMenu();
+            sysRoleMenu.setRoleName(roleName);
+            sysRoleMenu.setMenuId(id);
+            sysRoleMenuMapper.insertSelective(sysRoleMenu);
+        }
     }
 
     private MenuDetail convert(SysMenuWithBLOBs sysMenu) {
