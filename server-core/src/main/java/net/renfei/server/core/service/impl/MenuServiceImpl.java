@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.renfei.server.core.constant.MenuTypeEnum;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.entity.MenuDetail;
+import net.renfei.server.core.entity.RoleDetail;
+import net.renfei.server.core.entity.UserDetail;
 import net.renfei.server.core.repositories.SysMenuMapper;
 import net.renfei.server.core.repositories.SysRoleMenuMapper;
 import net.renfei.server.core.repositories.entity.SysMenuExample;
@@ -206,6 +208,42 @@ public class MenuServiceImpl extends BaseService implements MenuService {
             sysRoleMenu.setMenuId(id);
             sysRoleMenuMapper.insertSelective(sysRoleMenu);
         }
+    }
+
+    /**
+     * 获取我的菜单树（当前登录用户的菜单树）
+     *
+     * @return
+     */
+    @Override
+    public List<MenuDetail> getMyMenuTree() {
+        UserDetail currentUserDetail = super.getCurrentUserDetail();
+        Set<RoleDetail> roleDetails = currentUserDetail.getRoleDetails();
+        List<Long> menuIds = new ArrayList<>();
+        roleDetails.forEach(roleDetail -> roleDetail.getMenuDetails()
+                .forEach(menuDetail -> menuIds.add(Long.parseLong(menuDetail.getId()))));
+        return this.getMenuTree(0L, menuIds);
+    }
+
+    private List<MenuDetail> getMenuTree(Long pid, List<Long> ids) {
+        if (pid == null && ids != null && !ids.isEmpty()) {
+            return null;
+        }
+        SysMenuExample example = new SysMenuExample();
+        example.createCriteria()
+                .andPidEqualTo(pid)
+                .andIdIn(ids);
+        List<SysMenuWithBLOBs> sysMenus = sysMenuMapper.selectByExampleWithBLOBs(example);
+        if (sysMenus.isEmpty()) {
+            return null;
+        }
+        List<MenuDetail> menuDetails = new ArrayList<>(sysMenus.size());
+        for (SysMenuWithBLOBs sysMenu : sysMenus) {
+            MenuDetail convert = this.convert(sysMenu);
+            convert.setChildMenu(this.getMenuTree(sysMenu.getId(), ids));
+            menuDetails.add(convert);
+        }
+        return menuDetails;
     }
 
     private MenuDetail convert(SysMenuWithBLOBs sysMenu) {

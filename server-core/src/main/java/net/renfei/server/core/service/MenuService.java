@@ -72,4 +72,11 @@ public interface MenuService {
      * @param ids      菜单ID列表
      */
     void setMenuListByRoleName(String roleName, Set<Long> ids);
+
+    /**
+     * 获取我的菜单树（当前登录用户的菜单树）
+     *
+     * @return
+     */
+    List<MenuDetail> getMyMenuTree();
 }

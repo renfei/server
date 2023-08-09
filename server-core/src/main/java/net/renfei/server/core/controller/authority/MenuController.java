@@ -30,6 +30,16 @@ public class MenuController extends BaseController {
     private final static String MODULE_NAME = "MENU";
     private final MenuService menuService;
 
+    @GetMapping("/core/menu/tree/my")
+    @Operation(summary = "获取我的菜单树（当前登录用户的菜单树）"
+            , description = "获取我的菜单树（当前登录用户的菜单树）")
+    @AuditLog(module = MODULE_NAME, operation = "获取我的菜单树（当前登录用户的菜单树）"
+            , descriptionExpression = "获取我的菜单树（当前登录用户的菜单树）")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ApiResult<List<MenuDetail>> getMyMenuTree() {
+        return new ApiResult<>(menuService.getMyMenuTree());
+    }
+
     @GetMapping("/core/menu/tree")
     @Operation(summary = "获取全部菜单树", description = "获取全部菜单树")
     @AuditLog(module = MODULE_NAME, operation = "获取全部菜单树"
