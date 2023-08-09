@@ -108,5 +108,17 @@ application:
     alidns:
       # Endpoint 请参考 https://api.aliyun.com/product/Alidns
       endpoint: dns.aliyuncs.com # 硅谷：alidns.us-west-1.aliyuncs.com
+    oss:
+      endpoint: http://oss-cn-hangzhou.aliyuncs.com
   cloudflare:
     token: token
+    accountId: 16710c1a4cc36fdeec565057481140b7
+    r2:
+      bucket: r2storage
+      accessKeyId: accessKeyId
+      secretAccessKey: secretAccessKey
+  aws:
+    accessKeyId: accessKeyId
+    secretAccessKey: secretAccessKey
+    s3Region: ap-east-1
+    s3BucketName: s3-bucket-dev-test

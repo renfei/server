@@ -27,6 +27,7 @@ public class ServerProperties {
     private Zookeeper zookeeper;
     private Aliyun aliyun;
     private Cloudflare cloudflare;
+    private Aws aws;
 
     @Data
     public static class Jwt {
@@ -50,15 +51,39 @@ public class ServerProperties {
         private String accessKeyId;
         private String accessKeySecret;
         private Alidns alidns;
+        private Oss oss;
 
         @Data
         public static class Alidns {
             private String endpoint;
+        }
+
+        @Data
+        public static class Oss {
+            private String endpoint;
+            private String bucketName;
         }
     }
 
     @Data
     public static class Cloudflare {
         private String token;
+        private String accountId;
+        private R2 r2;
+
+        @Data
+        public static class R2 {
+            private String bucket;
+            private String accessKeyId;
+            private String secretAccessKey;
+        }
+    }
+
+    @Data
+    public static class Aws {
+        private String accessKeyId;
+        private String secretAccessKey;
+        private String s3Region;
+        private String s3BucketName;
     }
 }
