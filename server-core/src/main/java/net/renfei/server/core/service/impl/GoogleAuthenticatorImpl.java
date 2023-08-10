@@ -8,7 +8,7 @@ import net.renfei.server.core.entity.GoogleAuthenticatorKey;
 import net.renfei.server.core.exception.GoogleAuthenticatorException;
 import net.renfei.server.core.security.ReseedingSecureRandom;
 import net.renfei.server.core.service.GoogleAuthenticator;
-import org.apache.hc.core5.net.URIBuilder;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.stereotype.Service;
 
 import org.apache.commons.codec.binary.Base32;
