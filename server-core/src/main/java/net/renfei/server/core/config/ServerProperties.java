@@ -52,6 +52,7 @@ public class ServerProperties {
         private String accessKeySecret;
         private Alidns alidns;
         private Oss oss;
+        private Moderation moderation;
 
         @Data
         public static class Alidns {
@@ -62,6 +63,12 @@ public class ServerProperties {
         public static class Oss {
             private String endpoint;
             private String bucketName;
+        }
+
+        @Data
+        public static class Moderation {
+            private String region;
+            private String endpoint;
         }
     }
 

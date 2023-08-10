@@ -113,6 +113,9 @@ application:
       endpoint: dns.aliyuncs.com # 硅谷：alidns.us-west-1.aliyuncs.com
     oss:
       endpoint: http://oss-cn-hangzhou.aliyuncs.com
+    moderation:
+      region: cn-beijing
+      endpoint: green-cip.cn-beijing.aliyuncs.com
   cloudflare:
     token: token
     accountId: 16710c1a4cc36fdeec565057481140b7
