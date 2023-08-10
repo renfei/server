@@ -10,6 +10,7 @@ import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.service.BaseService;
 import net.renfei.server.core.service.CloudflareApiV4;
 import net.renfei.server.core.service.DomainNameService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +24,9 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "application"
+        , name = "defaultDomainNameService"
+        , havingValue = "DomainNameServiceCloudflareImpl")
 public class DomainNameServiceCloudflareImpl extends BaseService implements DomainNameService {
     private final CloudflareApiV4 cloudflareApiV4;
 

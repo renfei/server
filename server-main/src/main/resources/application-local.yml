@@ -92,6 +92,9 @@ application:
   systemMaxSecretLevel: UNCLASSIFIED
   # 默认密码
   defaultPassword: sha512:18:18:bEVdLY/+VYovIpCL/3KDERPXrEUSqdT6:XvWY2WUMNp5ms0xKzk2glODt
+  # 对象存储默认实现
+  defaultObjectStorageService: ObjectStorageServiceLocalImpl
+  defaultDomainNameService: DomainNameServiceAliyunImpl
   jwt:
     # token 过期时间 8*60*60=28800 秒
     tokenExpiration: 28800

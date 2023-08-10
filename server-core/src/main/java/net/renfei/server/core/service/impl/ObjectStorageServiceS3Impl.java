@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.renfei.server.core.config.ServerProperties;
 import net.renfei.server.core.service.BaseService;
 import net.renfei.server.core.service.ObjectStorageService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -25,6 +26,9 @@ import java.util.Map;
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(prefix = "application"
+        , name = "defaultObjectStorageService"
+        , havingValue = "ObjectStorageServiceS3Impl")
 public class ObjectStorageServiceS3Impl extends BaseService implements ObjectStorageService {
     private final S3Client s3Client;
     private final ServerProperties serverProperties;

@@ -9,6 +9,7 @@ import net.renfei.server.core.entity.DnsRecord;
 import net.renfei.server.core.entity.ListData;
 import net.renfei.server.core.service.DomainNameService;
 import net.renfei.server.core.service.BaseService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import com.aliyun.alidns20150109.Client;
@@ -25,6 +26,10 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(prefix = "application"
+        , name = "defaultDomainNameService"
+        , havingValue = "DomainNameServiceAliyunImpl"
+        , matchIfMissing = true)
 public class DomainNameServiceAliyunImpl extends BaseService implements DomainNameService {
     private final Client client;
 

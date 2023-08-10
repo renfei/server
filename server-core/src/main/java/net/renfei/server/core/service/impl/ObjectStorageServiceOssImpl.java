@@ -10,6 +10,7 @@ import net.renfei.server.core.config.ServerProperties;
 import net.renfei.server.core.service.BaseService;
 import net.renfei.server.core.service.ObjectStorageService;
 import org.apache.commons.io.IOUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -26,6 +27,9 @@ import java.util.Map;
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(prefix = "application"
+        , name = "defaultObjectStorageService"
+        , havingValue = "ObjectStorageServiceOssImpl")
 public class ObjectStorageServiceOssImpl extends BaseService implements ObjectStorageService {
     private final OSS ossClient;
     private final ServerProperties serverProperties;
