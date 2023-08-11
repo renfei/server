@@ -7,6 +7,7 @@ import com.sankuai.inf.leaf.common.Status;
 import com.sankuai.inf.leaf.common.Utils;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.server.core.config.ServerProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -17,6 +18,9 @@ import java.util.Random;
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(prefix = "application"
+        , name = "defaultIDGen"
+        , havingValue = "SnowflakeIDGenImpl")
 public class SnowflakeIDGenImpl implements IDGen {
     private final long twepoch;
     private final long workerIdBits = 10L;

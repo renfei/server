@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,6 +26,10 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "application"
+        , name = "defaultIDGen"
+        , havingValue = "SegmentIDGenImpl"
+        , matchIfMissing = true)
 public class SegmentIDGenImpl implements IDGen {
     /**
      * IDCache未初始化成功时的异常码
