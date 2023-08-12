@@ -17,6 +17,7 @@
         <module>server-core</module>
         <module>server-main</module>
         <module>server-member</module>
+        <module>server-cms</module>
     </modules>
 
     <properties>

@@ -1,5 +1,40 @@
 [
   {
+    "authority": "cms:article:query",
+    "name": "查询文章列表",
+    "describe": "查询文章列表"
+  },
+  {
+    "authority": "cms:article:create",
+    "name": "创建新文章",
+    "describe": "创建新文章"
+  },
+  {
+    "authority": "cms:article:update",
+    "name": "修改文章",
+    "describe": "修改文章"
+  },
+  {
+    "authority": "cms:article:publish",
+    "name": "发布/上线文章",
+    "describe": "发布/上线文章"
+  },
+  {
+    "authority": "cms:article:offline",
+    "name": "下线撤回文章",
+    "describe": "下线撤回文章"
+  },
+  {
+    "authority": "cms:article:delete",
+    "name": "删除文章",
+    "describe": "删除文章"
+  },
+  {
+    "authority": "cms:article:secret",
+    "name": "给文章定密",
+    "describe": "给文章定密"
+  },
+  {
     "authority": "system:user:query",
     "name": "查询用户列表",
     "describe": "查询用户列表"
