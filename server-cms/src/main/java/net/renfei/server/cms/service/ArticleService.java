@@ -33,6 +33,25 @@ public interface ArticleService {
                                        SecretLevelEnum secretLevel, int pages, int rows);
 
     /**
+     * 查询已发布文章内容列表
+     *
+     * @param pages 页码
+     * @param rows  每页容量
+     * @return
+     */
+    ListData<Article> queryPublishArticleList(int pages, int rows);
+
+    /**
+     * 根据分类名称查询已发布文章列表
+     *
+     * @param categoryEnName 分类名称
+     * @param pages          页码
+     * @param rows           每页容量
+     * @return
+     */
+    ListData<Article> queryPublishArticleListByCategoryEnName(String categoryEnName, int pages, int rows);
+
+    /**
      * 创建新文章
      *
      * @param article

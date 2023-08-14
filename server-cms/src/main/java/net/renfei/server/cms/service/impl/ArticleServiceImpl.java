@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.server.cms.constant.ArticleStatusEnum;
 import net.renfei.server.cms.entity.Article;
+import net.renfei.server.cms.entity.ArticleCategory;
 import net.renfei.server.cms.repositories.CmsArticleVersionsMapper;
 import net.renfei.server.cms.repositories.CmsArticlesMapper;
 import net.renfei.server.cms.repositories.entity.CmsArticleVersions;
@@ -109,6 +110,53 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
     }
 
     @Override
+    public ListData<Article> queryPublishArticleList(int pages, int rows) {
+        CmsArticlesExample example = new CmsArticlesExample();
+        example.setOrderByClause("publishDate DESC");
+        CmsArticlesExample.Criteria criteria = example.createCriteria()
+                .andStatusEqualTo(ArticleStatusEnum.PUBLISH.toString());
+        UserDetail currentUserDetail = getCurrentUserDetail();
+        if (currentUserDetail == null) {
+            // 未登录，只能查询非密内容
+            criteria.andSecretLevelEqualTo(SecretLevelEnum.UNCLASSIFIED.getLevel());
+        } else {
+            // 已登录，可以查看符合自己的密级内容
+            criteria.andSecretLevelLessThanOrEqualTo(currentUserDetail.getSecretLevel().getLevel());
+        }
+        try (Page<CmsArticles> page = PageHelper.startPage(pages, rows)) {
+            cmsArticlesMapper.selectByExampleWithBLOBs(example);
+            List<Article> articles = new ArrayList<>(page.size());
+            page.forEach(cmsArticles -> articles.add(this.convert(cmsArticles)));
+            return new ListData<>(page, articles);
+        }
+    }
+
+    public ListData<Article> queryPublishArticleListByCategoryEnName(String categoryEnName, int pages, int rows) {
+        ArticleCategory articleCategory = categoryService.queryArticleCategoryByName(categoryEnName);
+        Assert.notNull(articleCategory, "该分类不存在");
+        List<Long> categoryIds = categoryService.queryAllChildCategoryId(articleCategory.getId());
+        CmsArticlesExample example = new CmsArticlesExample();
+        example.setOrderByClause("publishDate DESC");
+        CmsArticlesExample.Criteria criteria = example.createCriteria();
+        criteria.andCategoryIdIn(categoryIds)
+                .andStatusEqualTo(ArticleStatusEnum.PUBLISH.toString());
+        UserDetail currentUserDetail = getCurrentUserDetail();
+        if (currentUserDetail == null) {
+            // 未登录，只能查询非密内容
+            criteria.andSecretLevelEqualTo(SecretLevelEnum.UNCLASSIFIED.getLevel());
+        } else {
+            // 已登录，可以查看符合自己的密级内容
+            criteria.andSecretLevelLessThanOrEqualTo(currentUserDetail.getSecretLevel().getLevel());
+        }
+        try (Page<CmsArticles> page = PageHelper.startPage(pages, rows)) {
+            cmsArticlesMapper.selectByExampleWithBLOBs(example);
+            List<Article> articles = new ArrayList<>(page.size());
+            page.forEach(cmsArticles -> articles.add(this.convert(cmsArticles)));
+            return new ListData<>(page, articles);
+        }
+    }
+
+    @Override
     public Article createArticle(Article article) {
         Assert.hasLength(article.getTitle(), "文章标题不能为空");
         Assert.hasLength(article.getContent(), "文章内容不能为空");
@@ -116,7 +164,9 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         article.setAuthorId(Long.valueOf(getCurrentUserDetail().getId()));
         article.setAuthorName(getCurrentUserDetail().getUsername());
         article.setUpdateDate(new Date());
-        // TODO 检查分类是否存在
+        // 检查分类是否存在
+        Assert.notNull(categoryService.queryArticleCategoryById(article.getCategoryId()),
+                "分类ID不正确");
         // TODO 根据是否开启审核流程确定状态
         article.setStatus(ArticleStatusEnum.REVIEW);
         article.setViews(0L);
@@ -144,7 +194,9 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         cmsArticleVersions.setArticleId(cmsArticles.getId());
         cmsArticleVersionsMapper.insert(cmsArticleVersions);
         if (!cmsArticles.getCategoryId().equals(article.getCategoryId())) {
-            // TODO 检查分类是否存在
+            // 检查分类是否存在
+            Assert.notNull(categoryService.queryArticleCategoryById(article.getCategoryId()),
+                    "分类ID不正确");
         }
         // 修改文章，重新设置为审核状态，需要重新上线
         cmsArticles.setStatus(ArticleStatusEnum.REVIEW.toString());

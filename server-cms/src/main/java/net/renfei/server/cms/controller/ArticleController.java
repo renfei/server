@@ -61,6 +61,36 @@ public class ArticleController extends BaseController {
                 publishDateMin, publishDateMax, status, secretLevel, pages, rows));
     }
 
+    @Operation(summary = "查询已发布文章内容列表", description = "查询已发布文章内容列表",
+            parameters = {
+                    @Parameter(name = "pages", description = "页码"),
+                    @Parameter(name = "rows", description = "每页容量")
+            })
+    @GetMapping("/cms/article/publish")
+    @AuditLog(module = MODULE_NAME, operation = "查询已发布文章内容列表",
+            descriptionExpression = "查询已发布文章内容列表")
+    public ApiResult<ListData<Article>> queryPublishArticleList(
+            @RequestParam(value = "pages", required = false, defaultValue = "1") int pages,
+            @RequestParam(value = "rows", required = false, defaultValue = "10") int rows) {
+        return new ApiResult<>(articleService.queryPublishArticleList(pages, rows));
+    }
+
+    @Operation(summary = "根据分类名称查询已发布文章列表", description = "根据分类名称查询已发布文章列表",
+            parameters = {
+                    @Parameter(name = "categoryEnName", description = "分类名称"),
+                    @Parameter(name = "pages", description = "页码"),
+                    @Parameter(name = "rows", description = "每页容量")
+            })
+    @GetMapping("/cms/article/category/{categoryEnName}/publish")
+    @AuditLog(module = MODULE_NAME, operation = "根据分类名称查询已发布文章列表",
+            descriptionExpression = "根据分类名称查询已发布文章列表")
+    public ApiResult<ListData<Article>> queryPublishArticleListByCategoryEnName(
+            @PathVariable("categoryEnName") String categoryEnName,
+            @RequestParam(value = "pages", required = false, defaultValue = "1") int pages,
+            @RequestParam(value = "rows", required = false, defaultValue = "10") int rows) {
+        return new ApiResult<>(articleService.queryPublishArticleListByCategoryEnName(categoryEnName, pages, rows));
+    }
+
     @Operation(summary = "创建新文章", description = "创建新文章")
     @PostMapping("/cms/article")
     @AuditLog(module = MODULE_NAME, operation = "创建新文章", descriptionExpression = "创建新文章")
