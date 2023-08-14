@@ -12,6 +12,7 @@ import net.renfei.server.cms.repositories.CmsArticlesMapper;
 import net.renfei.server.cms.repositories.entity.CmsArticleVersions;
 import net.renfei.server.cms.repositories.entity.CmsArticles;
 import net.renfei.server.cms.repositories.entity.CmsArticlesExample;
+import net.renfei.server.cms.service.ArticleCategoryService;
 import net.renfei.server.cms.service.ArticleService;
 import net.renfei.server.core.config.ServerProperties;
 import net.renfei.server.core.constant.SecretLevelEnum;
@@ -41,6 +42,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class ArticleServiceImpl extends BaseService implements ArticleService {
+    private final ArticleCategoryService categoryService;
     /**
      * 使用正则表达式匹配中文字符（包括英文单词）
      */
