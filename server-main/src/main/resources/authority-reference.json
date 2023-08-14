@@ -50,6 +50,21 @@
     "describe": "删除文章内容分类"
   },
   {
+    "authority": "cms:articletag:create",
+    "name": "创建新文章标签",
+    "describe": "创建新文章标签"
+  },
+  {
+    "authority": "cms:articletag:update",
+    "name": "修改文章标签",
+    "describe": "修改文章标签"
+  },
+  {
+    "authority": "cms:articletag:delete",
+    "name": "删除文章标签",
+    "describe": "删除文章标签"
+  },
+  {
     "authority": "system:user:query",
     "name": "查询用户列表",
     "describe": "查询用户列表"

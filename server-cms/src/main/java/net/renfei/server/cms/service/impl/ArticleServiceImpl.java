@@ -15,6 +15,7 @@ import net.renfei.server.cms.repositories.entity.CmsArticles;
 import net.renfei.server.cms.repositories.entity.CmsArticlesExample;
 import net.renfei.server.cms.service.ArticleCategoryService;
 import net.renfei.server.cms.service.ArticleService;
+import net.renfei.server.cms.service.TagsService;
 import net.renfei.server.core.config.ServerProperties;
 import net.renfei.server.core.constant.SecretLevelEnum;
 import net.renfei.server.core.entity.ListData;
@@ -53,6 +54,7 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
      */
     private final static int WPM = 275;
     private final IDGen idGen;
+    private final TagsService tagsService;
     private final ServerProperties serverProperties;
     private final CmsArticlesMapper cmsArticlesMapper;
     private final CmsArticleVersionsMapper cmsArticleVersionsMapper;
@@ -131,6 +133,7 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         }
     }
 
+    @Override
     public ListData<Article> queryPublishArticleListByCategoryEnName(String categoryEnName, int pages, int rows) {
         ArticleCategory articleCategory = categoryService.queryArticleCategoryByName(categoryEnName);
         Assert.notNull(articleCategory, "该分类不存在");
@@ -157,6 +160,32 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
     }
 
     @Override
+    public ListData<Article> queryPublishArticleListByTagEnName(String tagEnName, int pages, int rows) {
+        List<Long> articleIdsByTagName = tagsService.getArticleIdByTagName(tagEnName);
+        Assert.notNull(articleIdsByTagName, "该标签不存在");
+        CmsArticlesExample example = new CmsArticlesExample();
+        example.setOrderByClause("publishDate DESC");
+        CmsArticlesExample.Criteria criteria = example.createCriteria();
+        criteria.andIdIn(articleIdsByTagName)
+                .andStatusEqualTo(ArticleStatusEnum.PUBLISH.toString());
+        UserDetail currentUserDetail = getCurrentUserDetail();
+        if (currentUserDetail == null) {
+            // 未登录，只能查询非密内容
+            criteria.andSecretLevelEqualTo(SecretLevelEnum.UNCLASSIFIED.getLevel());
+        } else {
+            // 已登录，可以查看符合自己的密级内容
+            criteria.andSecretLevelLessThanOrEqualTo(currentUserDetail.getSecretLevel().getLevel());
+        }
+        try (Page<CmsArticles> page = PageHelper.startPage(pages, rows)) {
+            cmsArticlesMapper.selectByExampleWithBLOBs(example);
+            List<Article> articles = new ArrayList<>(page.size());
+            page.forEach(cmsArticles -> articles.add(this.convert(cmsArticles)));
+            return new ListData<>(page, articles);
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public Article createArticle(Article article) {
         Assert.hasLength(article.getTitle(), "文章标题不能为空");
         Assert.hasLength(article.getContent(), "文章内容不能为空");
@@ -177,6 +206,7 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         article.setReadTime(this.getReadTime(this.getPlainText(article.getContent())));
         article.setWordCount(this.getWordCount(this.getPlainText(article.getContent())));
         cmsArticlesMapper.insert(this.convert(article));
+        tagsService.saveArticleTags(article.getId(), article.getTags());
         return article;
     }
 
@@ -222,6 +252,7 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         cmsArticles.setWordCount(this.getWordCount(this.getPlainText(article.getContent())));
         cmsArticles.setContent(article.getContent());
         cmsArticlesMapper.updateByPrimaryKeyWithBLOBs(cmsArticles);
+        tagsService.saveArticleTags(article.getId(), article.getTags());
     }
 
     @Override

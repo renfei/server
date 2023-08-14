@@ -12,6 +12,7 @@ import net.renfei.server.core.constant.SecretLevelEnum;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 文章内容对象
@@ -89,4 +90,6 @@ public class Article implements Serializable {
     @NotNull
     @Schema(description = "文章内容")
     private String content;
+    @Schema(description = "文章标签")
+    private List<Tag> tags;
 }

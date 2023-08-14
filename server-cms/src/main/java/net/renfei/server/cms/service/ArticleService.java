@@ -52,6 +52,16 @@ public interface ArticleService {
     ListData<Article> queryPublishArticleListByCategoryEnName(String categoryEnName, int pages, int rows);
 
     /**
+     * 根据标签名称查询已发布文章列表
+     *
+     * @param tagEnName 标签名称
+     * @param pages     页码
+     * @param rows      每页容量
+     * @return
+     */
+    ListData<Article> queryPublishArticleListByTagEnName(String tagEnName, int pages, int rows);
+
+    /**
      * 创建新文章
      *
      * @param article

@@ -38,5 +38,7 @@
         <table schema="renfei" tableName="cms_articles"></table>
         <table schema="renfei" tableName="cms_article_versions"></table>
         <table schema="renfei" tableName="cms_article_category"></table>
+        <table schema="renfei" tableName="cms_tags"></table>
+        <table schema="renfei" tableName="cms_article_tag"></table>
     </context>
 </generatorConfiguration>

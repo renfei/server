@@ -91,6 +91,22 @@ public class ArticleController extends BaseController {
         return new ApiResult<>(articleService.queryPublishArticleListByCategoryEnName(categoryEnName, pages, rows));
     }
 
+    @Operation(summary = "根据标签名称查询已发布文章列表", description = "根据标签名称查询已发布文章列表",
+            parameters = {
+                    @Parameter(name = "tagEnName", description = "标签名称"),
+                    @Parameter(name = "pages", description = "页码"),
+                    @Parameter(name = "rows", description = "每页容量")
+            })
+    @GetMapping("/cms/article/tag/{tagEnName}/publish")
+    @AuditLog(module = MODULE_NAME, operation = "根据标签名称查询已发布文章列表",
+            descriptionExpression = "根据标签名称查询已发布文章列表")
+    public ApiResult<ListData<Article>> queryPublishArticleListByTagEnName(
+            @PathVariable("tagEnName") String tagEnName,
+            @RequestParam(value = "pages", required = false, defaultValue = "1") int pages,
+            @RequestParam(value = "rows", required = false, defaultValue = "10") int rows) {
+        return new ApiResult<>(articleService.queryPublishArticleListByTagEnName(tagEnName, pages, rows));
+    }
+
     @Operation(summary = "创建新文章", description = "创建新文章")
     @PostMapping("/cms/article")
     @AuditLog(module = MODULE_NAME, operation = "创建新文章", descriptionExpression = "创建新文章")
