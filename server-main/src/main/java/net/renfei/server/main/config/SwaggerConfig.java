@@ -43,6 +43,14 @@ public class SwaggerConfig {
     }
 
     @Bean
+    public GroupedOpenApi cmsGroupedOpenApi() {
+        return GroupedOpenApi.builder()
+                .group("CMS")
+                .pathsToMatch("/api/cms/**")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi memberGroupedOpenApi() {
         return GroupedOpenApi.builder()
                 .group("Member")
