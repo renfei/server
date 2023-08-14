@@ -162,6 +162,14 @@ public class MenuServiceImpl extends BaseService implements MenuService {
         sysRoleMenuMapper.deleteByExample(example);
     }
 
+    @Override
+    public void deleteRoleMenuRelationshipsByRoleName(String roleName) {
+        SysRoleMenuExample example = new SysRoleMenuExample();
+        example.createCriteria()
+                .andRoleNameEqualTo(roleName);
+        sysRoleMenuMapper.deleteByExample(example);
+    }
+
     /**
      * 根据角色名获取菜单列表
      *

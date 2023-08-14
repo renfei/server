@@ -130,7 +130,8 @@ public class RoleServiceImpl extends BaseService implements RoleService {
         userRoleExample.createCriteria()
                 .andRoleNameEqualTo(roleEnName.toUpperCase());
         sysUserRoleMapper.deleteByExample(userRoleExample);
-        // TODO 删除角色菜单资源关联表
+        // 删除角色菜单资源关联表
+        menuService.deleteRoleMenuRelationshipsByRoleName(sysRoles.get(0).getRoleEnName());
     }
 
     /**

@@ -58,6 +58,13 @@ public interface MenuService {
     void deleteMenu(Long id);
 
     /**
+     * 根据角色名删除角色与菜单的关系
+     *
+     * @param roleName 角色名
+     */
+    void deleteRoleMenuRelationshipsByRoleName(String roleName);
+
+    /**
      * 根据角色名获取菜单列表
      *
      * @param roleName 角色名
