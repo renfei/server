@@ -38,7 +38,7 @@ public class SystemController extends BaseController {
     @Operation(summary = "【危险】系统停机！",
             description = "【危险】系统停机，系统将主动停机！")
     @PostMapping("/core/system/shutdown")
-    @PreAuthorize("hasRole('MANAGER') and hasAuthority('system:shutdown:update')")
+    @PreAuthorize("hasRole('SYSTEM_MANAGE_OFFICER') and hasAuthority('system:shutdown:update')")
     public void shutdownSystem(HttpServletRequest request) {
         systemService.shutdownSystem(request);
     }

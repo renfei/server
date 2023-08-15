@@ -70,13 +70,48 @@
     "describe": "查询用户列表"
   },
   {
+    "authority": "system:scheduler:query",
+    "name": "查询定时任务列表",
+    "describe": "查询定时任务列表"
+  },
+  {
+    "authority": "system:scheduler:create",
+    "name": "创建定时任务",
+    "describe": "创建定时任务"
+  },
+  {
+    "authority": "system:scheduler:update",
+    "name": "修改定时任务",
+    "describe": "修改定时任务"
+  },
+  {
+    "authority": "system:scheduler:delete",
+    "name": "删除定时任务",
+    "describe": "删除定时任务"
+  },
+  {
+    "authority": "system:scheduler:pause",
+    "name": "暂停定时任务",
+    "describe": "暂停定时任务"
+  },
+  {
+    "authority": "system:scheduler:resume",
+    "name": "恢复定时任务",
+    "describe": "恢复定时任务"
+  },
+  {
+    "authority": "system:scheduler:run",
+    "name": "手动执行定时任务",
+    "describe": "手动执行定时任务"
+  },
+  {
     "authority": "system:auditlog:query",
-    "name": "系统审计日志查询权限",
-    "describe": "查询审计日志的权限"
+    "name": "系统审计日志查询",
+    "describe": "查询审计日志"
   },
   {
     "authority": "system:shutdown:update",
-    "name": "【危险】系统停机权限",
-    "describe": "【危险】提供停机的权限"
+    "name": "【危险】系统停机",
+    "describe": "【危险】提供停机"
   }
 ]
