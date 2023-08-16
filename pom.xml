@@ -18,6 +18,7 @@
         <module>server-main</module>
         <module>server-member</module>
         <module>server-cms</module>
+        <module>server-search</module>
     </modules>
 
     <properties>

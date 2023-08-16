@@ -163,6 +163,16 @@
                 <artifactId>server-member-biz</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>net.renfei</groupId>
+                <artifactId>server-search-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.renfei</groupId>
+                <artifactId>server-search-biz</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
