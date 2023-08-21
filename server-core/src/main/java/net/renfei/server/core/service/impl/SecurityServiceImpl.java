@@ -267,7 +267,7 @@ public class SecurityServiceImpl extends BaseService implements SecurityService 
         UserDetail currentUserDetail = getCurrentUserDetail();
         HttpServletRequest currentRequest = getCurrentRequest();
         SysAuditLogWithBLOBs sysAuditLog = new SysAuditLogWithBLOBs();
-        sysAuditLog.setUuid(UUID.randomUUID().toString());
+        sysAuditLog.setUuid(UUID.randomUUID().toString().replaceAll("-",""));
         sysAuditLog.setLogTime(new Date());
         sysAuditLog.setLogLevel(logLevel.toString());
         sysAuditLog.setModule(module);
