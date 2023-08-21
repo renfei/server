@@ -25,4 +25,24 @@ public interface VerificationCodeService {
      * @return
      */
     boolean verifyCaptchaImage(String id, String answers);
+
+    /**
+     * 发送验证账户的Email
+     *
+     * @param email        电子邮箱
+     * @param username     用户称呼
+     * @param type         类型：新增？修改？
+     * @param callBackLink 回调地址，邮件中的链接
+     */
+    void sendVerifyAccountEmail(String email, String username, String type, String callBackLink);
+
+    /**
+     * 验证邮箱验证码
+     *
+     * @param email 电子邮箱
+     * @param type  类型：新增？修改？
+     * @param code  验证码
+     * @return
+     */
+    boolean verifyAccountEmail(String email, String type, String code);
 }

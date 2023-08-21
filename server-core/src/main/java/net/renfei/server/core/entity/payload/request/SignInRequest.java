@@ -26,4 +26,8 @@ public class SignInRequest implements Serializable {
     private String keyId;
     @Schema(description = "一次性密码")
     private Integer totp;
+    @Schema(description = "图形验证码答案")
+    private Integer captcha;
+    @Schema(description = "图形验证码ID")
+    private String captchaId;
 }

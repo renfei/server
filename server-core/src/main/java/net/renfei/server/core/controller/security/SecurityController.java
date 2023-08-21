@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import net.renfei.server.core.annotation.AuditLog;
 import net.renfei.server.core.controller.BaseController;
 import net.renfei.server.core.entity.ApiResult;
+import net.renfei.server.core.entity.CaptchaImage;
 import net.renfei.server.core.entity.SecretKey;
 import net.renfei.server.core.service.SecurityService;
+import net.renfei.server.core.service.VerificationCodeService;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class SecurityController extends BaseController {
     private final static String MODULE_NAME = "SECURITY";
     private final SecurityService securityService;
+    private final VerificationCodeService verificationCodeService;
 
     /**
      * 向服务器申请服务器公钥
@@ -48,5 +51,17 @@ public class SecurityController extends BaseController {
     @AuditLog(module = MODULE_NAME, operation = "上报客户端公钥，并下发AES秘钥", descriptionExpression = "上报客户端公钥，并下发AES秘钥")
     public ApiResult<SecretKey> settingClientSecretKey(@RequestBody SecretKey secretKey) {
         return new ApiResult<>(securityService.settingClientSecretKey(secretKey));
+    }
+
+    /**
+     * 生成图形验证码
+     *
+     * @return
+     */
+    @GetMapping("/core/security/captcha")
+    @Operation(summary = "生成图形验证码", description = "生成图形验证码")
+    @AuditLog(module = MODULE_NAME, operation = "生成图形验证码", descriptionExpression = "生成图形验证码")
+    public ApiResult<CaptchaImage> generateCaptchaImage() {
+        return new ApiResult<>(verificationCodeService.generateCaptchaImage(130, 48));
     }
 }

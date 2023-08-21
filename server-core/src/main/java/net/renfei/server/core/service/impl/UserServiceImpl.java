@@ -151,7 +151,7 @@ public class UserServiceImpl extends BaseService implements UserService {
         String token = jwtUtil.generateToken(userDetail, "manager");
         // 放入 Redis
         redisService.setValue(RedisService.AUTH_TOKEN_KEY
-                + "MANAGER:" + userDetail.getUsername(), token, Duration.ofHours(8));
+                + "manager:" + userDetail.getUsername(), token, Duration.ofHours(8));
         securityService.insertAuditLog(LogLevelEnum.INFO,
                 MODULE_NAME, "用户登入系统",
                 "账户[" + userDetail.getUsername() + "]成功登入系统。", null);
@@ -161,6 +161,7 @@ public class UserServiceImpl extends BaseService implements UserService {
                 .build();
     }
 
+    @Override
     public ListData<UserDetail> querySystemUser(String username, String email,
                                                 String mobile, String name, int pages, int rows) {
         SysUserExample example = new SysUserExample();
