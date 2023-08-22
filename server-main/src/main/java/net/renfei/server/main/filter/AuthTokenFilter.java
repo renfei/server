@@ -12,6 +12,7 @@ import net.renfei.server.core.entity.UserDetail;
 import net.renfei.server.core.service.RedisService;
 import net.renfei.server.core.service.UserService;
 import net.renfei.server.core.utils.JwtUtil;
+import net.renfei.server.member.api.entity.MemberDetail;
 import net.renfei.server.member.service.MemberService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
@@ -60,6 +61,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
         String audience = jwtUtil.getClaimFromToken(token, Claims::getAudience);
         UserDetail userDetail;
+        MemberDetail memberDetail;
+        UsernamePasswordAuthenticationToken authentication;
         if ("manager".equals(audience)) {
             // 系统管理员的 Token
             userDetail = userService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
@@ -76,13 +79,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     return;
                 }
             }
+            authentication = new UsernamePasswordAuthenticationToken(
+                    userDetail, null,
+                    userDetail.getAuthorities()
+            );
         } else {
             // 普通用户会员的 Token
-            userDetail = memberService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
+            memberDetail = memberService.loadUserByUsername(jwtUtil.getUsernameFromToken(token));
             if (!properties.getAllowConcurrentLogin()) {
                 // 不允许多地登录
                 Serializable serializable = redisTemplate.opsForValue().get(RedisService.AUTH_TOKEN_KEY
-                        + "MEMBER:" + userDetail.getUsername());
+                        + "MEMBER:" + memberDetail.getUsername());
                 if (serializable == null) {
                     filterChain.doFilter(request, response);
                     return;
@@ -92,12 +99,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     return;
                 }
             }
+            authentication = new UsernamePasswordAuthenticationToken(
+                    memberDetail, null,
+                    memberDetail.getAuthorities()
+            );
         }
-        UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(
-                userDetail, null,
-                userDetail.getAuthorities()
-        );
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)
         );

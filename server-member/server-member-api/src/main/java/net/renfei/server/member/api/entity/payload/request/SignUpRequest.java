@@ -1,31 +1,28 @@
-package net.renfei.server.core.entity.payload.request;
+package net.renfei.server.member.api.entity.payload.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 登录请求
+ * 会员注册请求对象
  *
  * @author renfei
  */
 @Data
-public class SignInRequest implements Serializable {
+public class SignUpRequest implements Serializable {
     @Serial
     private static final long serialVersionUID = -3316408227872898096L;
-    @NotBlank
     @Schema(description = "用户名")
     private String username;
-    @NotBlank
-    @Schema(description = "密码")
+    @Schema(description = "密码（加密后传输）")
     private String password;
-    @Schema(description = "加密秘钥编号")
+    @Schema(description = "邮箱")
+    private String email;
+    @Schema(description = "加密密码使用的秘钥UUID编号")
     private String keyId;
-    @Schema(description = "一次性密码")
-    private Integer totp;
     @Schema(description = "图形验证码答案")
     private String captcha;
     @Schema(description = "图形验证码ID")
