@@ -23,7 +23,7 @@
         <httpclient.version>4.5.14</httpclient.version>
         <curator-recipes.version>5.5.0</curator-recipes.version>
         <perf4j.version>0.9.16</perf4j.version>
-        <alidns.version>3.0.7</alidns.version>
+        <alidns.version>3.0.8</alidns.version>
         <alioss.version>3.15.1</alioss.version>
         <aligreen.version>1.0.8</aligreen.version>
         <jsoup.version>1.16.1</jsoup.version>
