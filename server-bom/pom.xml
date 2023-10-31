@@ -25,7 +25,7 @@
         <perf4j.version>0.9.16</perf4j.version>
         <alidns.version>3.0.7</alidns.version>
         <alioss.version>3.15.1</alioss.version>
-        <aligreen.version>1.0.8</aligreen.version>
+        <aligreen.version>1.1.0</aligreen.version>
         <jsoup.version>1.16.1</jsoup.version>
     </properties>
 
