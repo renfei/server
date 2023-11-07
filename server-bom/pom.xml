@@ -16,7 +16,7 @@
         <aws.java.sdk.version>2.20.120</aws.java.sdk.version>
         <druid.version>1.2.18</druid.version>
         <mybatis.version>3.0.2</mybatis.version>
-        <pagehelper.version>1.4.7</pagehelper.version>
+        <pagehelper.version>2.0.0</pagehelper.version>
         <springdoc.version>2.1.0</springdoc.version>
         <jjwt.version>0.11.5</jjwt.version>
         <commons-codec.version>1.16.0</commons-codec.version>
